@@ -3,9 +3,14 @@ package com.example.lexer_and_parser;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Lexer {
     private static Dictionary<String, ArrayList<String>> predefinedTokens = new Hashtable<>();
+    public cReader reader = new cReader("src/main/C/c_code.c");
+
+    private ArrayList<String> tokens = new ArrayList<>();
 
     public Lexer(){
         ArrayList<String> cOperators = new ArrayList<>();
@@ -20,12 +25,12 @@ public class Lexer {
         cOperators.add(">>");cOperators.add(">>>");cOperators.add("?:");cOperators.add("++");cOperators.add("--");
         cOperators.add("+=");cOperators.add("-=");cOperators.add("*=");cOperators.add("/=");cOperators.add("%=");
         cOperators.add("&=");cOperators.add("|=");cOperators.add("^=");cOperators.add("<<=");cOperators.add(">>=");
-        cOperators.add(">>>=");cOperators.add("->");cOperators.add(".");cOperators.add("?");cOperators.add("::");
+        cOperators.add(">>>=");cOperators.add("->");cOperators.add(".");cOperators.add("?");
 
         // Add C-language punctuations to the ArrayList
         cPunctuation.add("(");cPunctuation.add(")");cPunctuation.add("{");cPunctuation.add("}");
-        cPunctuation.add("]");cPunctuation.add(".");cPunctuation.add(";");cPunctuation.add(",");
-        cPunctuation.add(":");cPunctuation.add("...");cPunctuation.add("#");cPunctuation.add("[");
+        cPunctuation.add("]");cPunctuation.add(";");cPunctuation.add(",");
+        cPunctuation.add(":");cPunctuation.add("[");
 
         // Add C-language keywords to the ArrayList
         cKeywords.add("auto");cKeywords.add("break");cKeywords.add("case");cKeywords.add("char");
@@ -42,8 +47,80 @@ public class Lexer {
         predefinedTokens.put("Keywords", cKeywords);
     }
 
-    public void displayTokens(){}
+    public void tokenize() {
+        ArrayList<String> lines = reader.getClines();
+        boolean inBlockComment = false;
+        Pattern tokenPattern = Pattern.compile("\"[^\"]*\"|'.'|\\b(\\d+\\.\\d+|\\d+|\\b(?:\\+|-|\\*|/|%|=|==|!=|>|<|>=|<=|&&|\\|\\||!|&|\\||\\^|~|<<|>>|>>>|\\?|::|\\+\\+|--|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|<<=|>>=|>>>=|->|\\.|\\?|\\(|\\)|,|;|\\[|\\{|\\}|\\]))\\b|\\b[a-zA-Z_][a-zA-Z0-9_]*\\b|\\(|\\)|\\{|\\}|;|,");
+        for (String line : lines) {
+            // Skip lines starting with "#" and comments
+            if (!line.trim().startsWith("#")) {
+                line = removeComments(line);
+                // Match tokens using regular expression
+                Matcher matcher = tokenPattern.matcher(line);
+                while (matcher.find()) {
+                    String token = matcher.group();
+                    if (token.startsWith("\"") && token.endsWith("\"")) {
+                        tokens.add("String: " + token);
+                    } else if (token.startsWith("'") && token.endsWith("'")) {
+                        tokens.add("Character: " + token);
+                    } else if (Character.isDigit(token.charAt(0))) {
+                        tokens.add("Number: " + token);
+                    } else if (isOperator(token)) {
+                        tokens.add("Operator: " + token);
+                    } else if (isPunctuation(token)) {
+                        tokens.add("Punctuation: " + token);
+                    } else if (isKeyword(token)) {
+                        tokens.add("Keyword: " + token);
+                    } else {
+                        tokens.add("Identifier: " + token);
+                    }
+                }
+            }
+        }
+    }
 
-    public static void main(String[] args) {}
+
+    private String removeComments(String line) {
+        // Remove single-line comments starting with "//"
+        line = line.replaceAll("//.*", "");
+        // Remove block comments "/* */"
+        line = line.replaceAll("/\\*.*?\\*/", "");
+        return line;
+    }
+
+
+    private boolean isOperator(String token) {
+        return predefinedTokens.get("Operators").contains(token);
+    }
+
+    private boolean isPunctuation(String token) {
+        String[] punctuations = { "(", ")", "{", "}", "[", "]", ",", ";", ":" };
+        for (String punctuation : punctuations) {
+            if (punctuation.equals(token)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isKeyword(String token) {
+        return predefinedTokens.get("Keywords").contains(token);
+    }
+
+    public void displayTokens() {
+        for (String token : tokens) {
+            System.out.println(token);
+        }
+    }
+
+    public static void main(String[] args) {
+        Lexer lexer = new Lexer();
+        lexer.tokenize();
+        lexer.displayTokens();
+//        ArrayList<String> cLines = reader.getClines();
+//        for (int i = 0; i < cLines.size(); i++) {
+//            System.out.println(cLines.get(i));
+//        }
+    }
 
 }
