@@ -9,9 +9,7 @@ import java.util.regex.Pattern;
 public class Lexer {
     private static Dictionary<String, ArrayList<String>> predefinedTokens = new Hashtable<>();
     public cReader reader = new cReader("src/main/C/c_code.c");
-
-    private ArrayList<String> tokens = new ArrayList<>();
-
+    private Dictionary<String, ArrayList<String>> tokens = new Hashtable<>();
     public Lexer(){
         ArrayList<String> cOperators = new ArrayList<>();
         ArrayList<String> cPunctuation = new ArrayList<>();
@@ -48,9 +46,17 @@ public class Lexer {
     }
 
     public void tokenize() {
+        ArrayList<String> str_values = new ArrayList<>();
+        ArrayList<String> char_values = new ArrayList<>();
+        ArrayList<String> operator_values = new ArrayList<>();
+        ArrayList<String> puncatuation_values = new ArrayList<>();
+        ArrayList<String> number_values = new ArrayList<>();
+        ArrayList<String> keyword_values = new ArrayList<>();
+        ArrayList<String> id_values = new ArrayList<>();
+
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
-        Pattern tokenPattern = Pattern.compile("\"[^\"]*\"|'.'|\\b(\\d+\\.\\d+|\\d+|\\b(?:\\+|-|\\*|/|%|=|==|!=|>|<|>=|<=|&&|\\|\\||!|&|\\||\\^|~|<<|>>|>>>|\\?|::|\\+\\+|--|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|<<=|>>=|>>>=|->|\\.|\\?|\\(|\\)|,|;|\\[|\\{|\\}|\\]))\\b|\\b[a-zA-Z_][a-zA-Z0-9_]*\\b|\\(|\\)|\\{|\\}|;|,");
+        Pattern tokenPattern = Pattern.compile("\"[^\"]*\"|'.'|\\b(\\d+\\.\\d+|\\d+|\\b(?:\\+|-|\\*|/|%|=|==|!=|>|<|>=|<=|&&|\\|\\||!|&|\\||\\^|~|<<|>>|>>>|\\?|\\+\\+|--|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|<<=|>>=|>>>=|->|\\.|\\?|\\(|\\)|\\{|\\}|\\[|\\]))\\b|\\b[a-zA-Z_][a-zA-Z0-9_]*\\b|\\(|\\)|\\{|\\}|;|,");
         for (String line : lines) {
             // Skip lines starting with "#" and comments
             if (!line.trim().startsWith("#")) {
@@ -60,25 +66,42 @@ public class Lexer {
                 while (matcher.find()) {
                     String token = matcher.group();
                     if (token.startsWith("\"") && token.endsWith("\"")) {
-                        tokens.add("String: " + token);
+                        str_values.add(token);
                     } else if (token.startsWith("'") && token.endsWith("'")) {
-                        tokens.add("Character: " + token);
+                        char_values.add(token);
                     } else if (Character.isDigit(token.charAt(0))) {
-                        tokens.add("Number: " + token);
+                        number_values.add(token);
                     } else if (isOperator(token)) {
-                        tokens.add("Operator: " + token);
+                        operator_values.add(token);
                     } else if (isPunctuation(token)) {
-                        tokens.add("Punctuation: " + token);
+                        puncatuation_values.add(token);
                     } else if (isKeyword(token)) {
-                        tokens.add("Keyword: " + token);
+                        keyword_values.add(token);
                     } else {
-                        tokens.add("Identifier: " + token);
+                        id_values.add(token);
                     }
                 }
             }
         }
+        tokens.put("String", str_values);
+        tokens.put("Character", char_values);
+        tokens.put("Operators", operator_values);
+        tokens.put("Puncatuations", puncatuation_values);
+        tokens.put("Numbers", number_values);
+        tokens.put("Keywords", keyword_values);
+        tokens.put("Identifiers", id_values);
     }
 
+
+    private boolean isFunction(String token) {
+        // Check if the token is followed by a pair of parentheses
+        return token.matches("[a-zA-Z_][a-zA-Z0-9_]*\\s*\\(.*\\)");
+    }
+
+    private boolean isVariable(String token) {
+        // Check if the token is followed by an equal sign or is a standalone identifier
+        return token.matches("[a-zA-Z_][a-zA-Z0-9_]*\\s*(=\\s*.*|;)");
+    }
 
     private String removeComments(String line) {
         // Remove single-line comments starting with "//"
@@ -108,19 +131,13 @@ public class Lexer {
     }
 
     public void displayTokens() {
-        for (String token : tokens) {
-            System.out.println(token);
-        }
+        System.out.println(tokens);
     }
 
     public static void main(String[] args) {
         Lexer lexer = new Lexer();
         lexer.tokenize();
         lexer.displayTokens();
-//        ArrayList<String> cLines = reader.getClines();
-//        for (int i = 0; i < cLines.size(); i++) {
-//            System.out.println(cLines.get(i));
-//        }
     }
 
 }
