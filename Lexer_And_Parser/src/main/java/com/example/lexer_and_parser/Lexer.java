@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 public class Lexer {
     private static Dictionary<String, ArrayList<String>> predefinedTokens = new Hashtable<>();
     public cReader reader = new cReader("src/main/C/c_code.c");
+    private ArrayList<String> dictKeys = new ArrayList<String>();
     private Dictionary<String, ArrayList<String>> tokens = new Hashtable<>();
     public Lexer(){
         ArrayList<String> cOperators = new ArrayList<>();
@@ -50,13 +51,26 @@ public class Lexer {
         ArrayList<String> char_values = new ArrayList<>();
         ArrayList<String> operator_values = new ArrayList<>();
         ArrayList<String> puncatuation_values = new ArrayList<>();
-        ArrayList<String> number_values = new ArrayList<>();
+        ArrayList<String> int_values = new ArrayList<>();
+        ArrayList<String> float_values = new ArrayList<>();
         ArrayList<String> keyword_values = new ArrayList<>();
         ArrayList<String> id_values = new ArrayList<>();
 
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
-        Pattern tokenPattern = Pattern.compile("\"[^\"]*\"|'.'|\\b(\\d+\\.\\d+|\\d+|\\b(?:\\+|-|\\*|/|%|=|==|!=|>|<|>=|<=|&&|\\|\\||!|&|\\||\\^|~|<<|>>|>>>|\\?|\\+\\+|--|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|<<=|>>=|>>>=|->|\\.|\\?|\\(|\\)|\\{|\\}|\\[|\\]))\\b|\\b[a-zA-Z_][a-zA-Z0-9_]*\\b|\\(|\\)|\\{|\\}|;|,");
+        String num_regex = "(['+']|-)?\\d+(\\.\\d+)?(e(['+']|-)?\\d+)?";
+        Pattern tokenPattern = Pattern.compile(
+            "\"[^\"]*\"|" +             // Match double-quoted strings
+            "'.'|" +                    // Match single characters within single quotes
+            num_regex + "|" +           // Match numbers
+            "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b|" + // Match identifiers
+            "\\(|\\)|\\{|\\}|;|,|" +    // Match parentheses, braces, semicolon, comma
+            "\\+\\+|--|==|!=|<=|>=|&&|" + // Match comparison and logical operators
+            "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
+            "\\+|\\*|/|%|<|>|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\>\\>\\>\\=|" + // Match arithmetic and bitwise operators
+            "\\-|\\+|\\*|\\=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\>\\>\\>|\\?|" + // Match miscellaneous operators
+            "\\:\\:|\\?\\:|\\+\\+|\\-\\-|\\." // Match other operators
+        );
         for (String line : lines) {
             // Skip lines starting with "#" and comments
             if (!line.trim().startsWith("#")) {
@@ -70,7 +84,11 @@ public class Lexer {
                     } else if (token.startsWith("'") && token.endsWith("'")) {
                         char_values.add(token);
                     } else if (Character.isDigit(token.charAt(0))) {
-                        number_values.add(token);
+                        if (!token.contains(".")){
+                            int_values.add(token);
+                        }else{
+                            float_values.add(token);
+                        }
                     } else if (isOperator(token)) {
                         operator_values.add(token);
                     } else if (isPunctuation(token)) {
@@ -83,13 +101,23 @@ public class Lexer {
                 }
             }
         }
-        tokens.put("String", str_values);
-        tokens.put("Character", char_values);
-        tokens.put("Operators", operator_values);
-        tokens.put("Puncatuations", puncatuation_values);
-        tokens.put("Numbers", number_values);
-        tokens.put("Keywords", keyword_values);
-        tokens.put("Identifiers", id_values);
+
+        dictKeys.add("String");
+        dictKeys.add("Character");
+        dictKeys.add("Operators");
+        dictKeys.add("Puncatuations");
+        dictKeys.add("Integer");
+        dictKeys.add("Float");
+        dictKeys.add("Keywords");
+        dictKeys.add("Identifiers");
+        tokens.put(dictKeys.get(0), str_values);
+        tokens.put(dictKeys.get(1), char_values);
+        tokens.put(dictKeys.get(2), operator_values);
+        tokens.put(dictKeys.get(3), puncatuation_values);
+        tokens.put(dictKeys.get(4), int_values);
+        tokens.put(dictKeys.get(5), float_values);
+        tokens.put(dictKeys.get(6), keyword_values);
+        tokens.put(dictKeys.get(7), id_values);
     }
 
 
@@ -131,7 +159,17 @@ public class Lexer {
     }
 
     public void displayTokens() {
-        System.out.println(tokens);
+        for (int i = 0; i < tokens.size(); i++) {
+            System.out.print(dictKeys.get(i) + ": ");
+            String values = "";
+            for (int j = 0; j < tokens.get(dictKeys.get(i)).size(); j++) {
+                System.out.print(tokens.get(dictKeys.get(i)).get(j));
+                if (j < tokens.get(dictKeys.get(i)).size() - 1) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.println();
+        }
     }
 
     public static void main(String[] args) {
