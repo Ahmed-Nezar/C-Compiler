@@ -82,12 +82,13 @@ public class Lexer {
                 line = removeComments(line);
                 // Match tokens using regular expression
                 Matcher matcher = tokenPattern.matcher(line);
-                boolean structBlock = false;
                 while (matcher.find()) {
                     String token = matcher.group();
                     if (token.matches("\\}(?:\\s*\\w+)?\\s*;")){
                         String filteredStr = token.replaceAll("\\s", "").replaceAll(";", "")
                                 .replaceAll("}", "");
+                        puncatuation_values.add("}");
+                        puncatuation_values.add(";");
                         if (!filteredStr.isEmpty()){
                             id_struct.add(filteredStr);
                         }
@@ -116,15 +117,12 @@ public class Lexer {
                             puncatuation_values.add("(");
                             id_function.add(token);
                         } else if (isStruct(token)) {
-                            structBlock = true;
-                            while(!token.equals(token.replaceFirst("typedef", ""))){
-                                token = token.replaceFirst("typedef", "");
-                                keyword_values.add("typedef");
-                            }
-                            while(!token.equals(token.replaceFirst("struct", ""))){
-                                token = token.replaceFirst("struct", "");
-                                keyword_values.add("struct");
-                            }
+                            token = token.replaceFirst("typedef", "");
+                            keyword_values.add("typedef");
+
+                            token = token.replaceFirst("struct", "");
+                            keyword_values.add("struct");
+
                             token = token.replaceAll("\\s", "");
                             while(!token.equals(token.replaceFirst("\\{", ""))){
                                 token = token.replaceFirst("\\{", "");
@@ -193,13 +191,14 @@ public class Lexer {
     }
 
     private boolean isPunctuation(String token) {
-        String[] punctuations = { "(", ")", "{", "}", "[", "]", ",", ";", ":" };
-        for (String punctuation : punctuations) {
-            if (punctuation.equals(token)) {
-                return true;
-            }
-        }
-        return false;
+//        String[] punctuations = { "(", ")", "{", "}", "[", "]", ",", ";", ":" };
+//        for (String punctuation : punctuations) {
+//            if (punctuation.equals(token)) {
+//                return true;
+//            }
+//        }
+//        return false;
+        return predefinedTokens.get("Punctuations").contains(token);
     }
 
     private boolean isKeyword(String token) {
