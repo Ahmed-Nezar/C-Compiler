@@ -1,5 +1,42 @@
 #include <stdio.h>
 
+// Test Case Pass
+typedef struct {
+    int x;
+    int y;
+} Point;
+//--------------------------------
+
+// Test Case Pass
+struct {
+    int x;
+    int y;
+} Point;
+//--------------------------------
+
+// Test Case Pass
+struct Point {
+    int x;
+    int y;
+};
+//--------------------------------
+
+// Test Case Pass
+typedef struct Point {
+    int x;
+    int y;
+} Point;
+//--------------------------------
+
+// Test Case Pass
+struct Point;
+// Define struct members later
+struct Point {
+    int x;
+    int y;
+};
+//--------------------------------
+
 int main() {
     // Declare variables
     int integerVariable = 42, z, h;
@@ -12,7 +49,7 @@ int main() {
     z-h;
     s += tt;
     h++;
-    x->y = 4.5578441;
+    x->y->z->h = 4.5578441;
     omar.hours = 3;
 
     // Display values using printf

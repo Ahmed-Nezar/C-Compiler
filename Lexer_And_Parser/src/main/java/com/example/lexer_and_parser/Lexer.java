@@ -54,7 +54,9 @@ public class Lexer {
         ArrayList<String> int_values = new ArrayList<>();
         ArrayList<String> float_values = new ArrayList<>();
         ArrayList<String> keyword_values = new ArrayList<>();
-        ArrayList<String> id_values = new ArrayList<>();
+        ArrayList<String> id_function = new ArrayList<>();
+        ArrayList<String> id_variable = new ArrayList<>();
+        ArrayList<String> id_struct = new ArrayList<>();
 
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
@@ -63,7 +65,10 @@ public class Lexer {
             "\"[^\"]*\"|" +             // Match double-quoted strings
             "'.'|" +                    // Match single characters within single quotes
             num_regex + "|" +           // Match numbers
-            "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b|" + // Match identifiers
+            "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Functions)
+            "\\}(?:\\s*\\w+)?\\s*;|" + // Match End Block of Struct
+            "^(struct|typedef( )struct)\\s+(\\w+)\\s*[\\{|;]|" + // Match identifiers (Structs)
+            "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b((?!\\()|(?!\\{))|" + // Match identifiers (Variables)
             "\\(|\\)|\\{|\\}|;|,|" +    // Match parentheses, braces, semicolon, comma
             "\\+\\+|--|==|!=|<=|>=|&&|" + // Match comparison and logical operators
             "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
@@ -77,8 +82,17 @@ public class Lexer {
                 line = removeComments(line);
                 // Match tokens using regular expression
                 Matcher matcher = tokenPattern.matcher(line);
+                boolean structBlock = false;
                 while (matcher.find()) {
                     String token = matcher.group();
+                    if (token.matches("\\}(?:\\s*\\w+)?\\s*;")){
+                        String filteredStr = token.replaceAll("\\s", "").replaceAll(";", "")
+                                .replaceAll("}", "");
+                        if (!filteredStr.isEmpty()){
+                            id_struct.add(filteredStr);
+                        }
+                        continue;
+                    }
                     if (token.startsWith("\"") && token.endsWith("\"")) {
                         str_values.add(token);
                     } else if (token.startsWith("'") && token.endsWith("'")) {
@@ -96,20 +110,49 @@ public class Lexer {
                     } else if (isKeyword(token)) {
                         keyword_values.add(token);
                     } else {
-                        id_values.add(token);
+                        // Check if the token is a function or a variable
+                        if (isFunction(token)) {
+                            token = token.replaceFirst("\\(", "");
+                            puncatuation_values.add("(");
+                            id_function.add(token);
+                        } else if (isStruct(token)) {
+                            structBlock = true;
+                            while(!token.equals(token.replaceFirst("typedef", ""))){
+                                token = token.replaceFirst("typedef", "");
+                                keyword_values.add("typedef");
+                            }
+                            while(!token.equals(token.replaceFirst("struct", ""))){
+                                token = token.replaceFirst("struct", "");
+                                keyword_values.add("struct");
+                            }
+                            token = token.replaceAll("\\s", "");
+                            while(!token.equals(token.replaceFirst("\\{", ""))){
+                                token = token.replaceFirst("\\{", "");
+                                puncatuation_values.add("{");
+                            }
+                            while(!token.equals(token.replaceFirst(";", ""))){
+                                token = token.replaceFirst(";", "");
+                                puncatuation_values.add(";");
+                            }
+                            id_struct.add(token);
+                        } else {
+                            id_variable.add(token);
+                        }
                     }
                 }
             }
         }
 
-        dictKeys.add("String");
-        dictKeys.add("Character");
+        dictKeys.add("Strings");
+        dictKeys.add("Characters");
         dictKeys.add("Operators");
         dictKeys.add("Puncatuations");
-        dictKeys.add("Integer");
-        dictKeys.add("Float");
+        dictKeys.add("Integers");
+        dictKeys.add("Floats");
         dictKeys.add("Keywords");
-        dictKeys.add("Identifiers");
+        dictKeys.add("Identifiers (Functions)");
+        dictKeys.add("Identifiers (Variables)");
+        dictKeys.add("Identifiers (Structs)");
         tokens.put(dictKeys.get(0), str_values);
         tokens.put(dictKeys.get(1), char_values);
         tokens.put(dictKeys.get(2), operator_values);
@@ -117,13 +160,18 @@ public class Lexer {
         tokens.put(dictKeys.get(4), int_values);
         tokens.put(dictKeys.get(5), float_values);
         tokens.put(dictKeys.get(6), keyword_values);
-        tokens.put(dictKeys.get(7), id_values);
+        tokens.put(dictKeys.get(7), id_function);
+        tokens.put(dictKeys.get(8), id_variable);
+        tokens.put(dictKeys.get(9), id_struct);
     }
 
 
     private boolean isFunction(String token) {
-        // Check if the token is followed by a pair of parentheses
-        return token.matches("[a-zA-Z_][a-zA-Z0-9_]*\\s*\\(.*\\)");
+        return token.contains("(");
+    }
+
+    private boolean isStruct(String token) {
+        return !token.replaceFirst("struct", "").equals(token);
     }
 
     private boolean isVariable(String token) {
