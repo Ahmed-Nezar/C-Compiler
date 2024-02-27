@@ -4,34 +4,34 @@
 typedef struct {
     int x;
     int y;
-} Point;
+} Point1;
 //--------------------------------
 
 // Test Case Pass
 struct {
     int x;
     int y;
-} Point;
+} Point2;
 //--------------------------------
 
 // Test Case Pass
-struct Point {
+struct Point3 {
     int x;
     int y;
 };
 //--------------------------------
 
 // Test Case Pass
-typedef struct Point {
+typedef struct Point4 {
     int x;
     int y;
-} Point;
+} Point4;
 //--------------------------------
 
 // Test Case Pass
-struct Point;
+struct Point5;
 // Define struct members later
-struct Point {
+struct Point5 {
     int x;
     int y;
 };
@@ -49,7 +49,8 @@ int main() {
     z-h;
     s += tt;
     h++;
-    x->y->z->h = 4.5578441;
+    x->y->z->h = 4.5578441e-7;
+    z = 3.146416e-7;
     omar.hours = 3;
 
     // Display values using printf
