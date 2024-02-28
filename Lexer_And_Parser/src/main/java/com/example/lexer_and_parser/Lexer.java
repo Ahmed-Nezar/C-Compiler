@@ -8,10 +8,11 @@ import java.util.regex.Pattern;
 
 public class Lexer {
     private static Dictionary<String, ArrayList<String>> predefinedTokens = new Hashtable<>();
-    public cReader reader = new cReader("src/main/C/c_code.c");
-    private ArrayList<String> dictKeys = new ArrayList<String>();
+    public cReader reader;
+    private ArrayList<String> dictKeys = new ArrayList<>();
     private Dictionary<String, ArrayList<String>> tokens = new Hashtable<>();
-    public Lexer(){
+    public Lexer(String path){
+        reader = new cReader(path);
         ArrayList<String> cOperators = new ArrayList<>();
         ArrayList<String> cPunctuation = new ArrayList<>();
         ArrayList<String> cKeywords = new ArrayList<>();
@@ -76,6 +77,7 @@ public class Lexer {
             "\\-|\\+|\\*|\\=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\>\\>\\>|\\?|" + // Match miscellaneous operators
             "\\:\\:|\\?\\:|\\+\\+|\\-\\-|\\." // Match other operators
         );
+        boolean isStruct = false;
         for (String line : lines) {
             // Skip lines starting with "#" and comments
             if (!line.trim().startsWith("#")) {
@@ -84,7 +86,8 @@ public class Lexer {
                 Matcher matcher = tokenPattern.matcher(line);
                 while (matcher.find()) {
                     String token = matcher.group();
-                    if (token.matches("\\}(?:\\s*\\w+)?\\s*;")){
+                    if (token.matches("\\}(?:\\s*\\w+)?\\s*;") && isStruct){
+                        isStruct = false;
                         String filteredStr = token.replaceAll("\\s", "").replaceAll(";", "")
                                 .replaceAll("}", "");
                         puncatuation_values.add("}");
@@ -94,29 +97,36 @@ public class Lexer {
                         }
                         continue;
                     }
-                    if (token.startsWith("\"") && token.endsWith("\"")) {
-                        str_values.add(token);
-                    } else if (token.startsWith("'") && token.endsWith("'")) {
-                        char_values.add(token);
+                    if (isPunctuation(token)) {
+                        puncatuation_values.add(token);
+                    } else if (isOperator(token)) {
+                        operator_values.add(token);
                     } else if (Character.isDigit(token.charAt(0))) {
                         if (!token.contains(".")){
                             int_values.add(token);
                         }else{
                             float_values.add(token);
                         }
-                    } else if (isOperator(token)) {
-                        operator_values.add(token);
-                    } else if (isPunctuation(token)) {
-                        puncatuation_values.add(token);
+                    } else if (token.startsWith("'") && token.endsWith("'")) {
+                        char_values.add(token);
+                    } else if (token.startsWith("\"") && token.endsWith("\"")) {
+                        str_values.add(token);
                     } else if (isKeyword(token)) {
+                        if (token.equals("struct")) {
+                            isStruct = true;
+                        }
                         keyword_values.add(token);
                     } else {
                         // Check if the token is a function or a variable
                         if (isFunction(token)) {
                             token = token.replaceFirst("\\(", "");
                             puncatuation_values.add("(");
-                            id_function.add(token);
+                            if (isKeyword(token))
+                                keyword_values.add(token);
+                            else
+                                id_function.add(token);
                         } else if (isStruct(token)) {
+                            isStruct = true;
                             token = token.replaceFirst("typedef", "");
                             keyword_values.add("typedef");
 
@@ -134,6 +144,14 @@ public class Lexer {
                             }
                             id_struct.add(token);
                         } else {
+                            if (token.contains("}")) {
+                                token = token.replaceFirst("}", "");
+                                puncatuation_values.add("}");
+                            }
+                            if (token.contains(";")) {
+                                token = token.replaceFirst(";", "");
+                                puncatuation_values.add(";");
+                            }
                             id_variable.add(token);
                         }
                     }
@@ -191,13 +209,6 @@ public class Lexer {
     }
 
     private boolean isPunctuation(String token) {
-//        String[] punctuations = { "(", ")", "{", "}", "[", "]", ",", ";", ":" };
-//        for (String punctuation : punctuations) {
-//            if (punctuation.equals(token)) {
-//                return true;
-//            }
-//        }
-//        return false;
         return predefinedTokens.get("Punctuations").contains(token);
     }
 
@@ -220,9 +231,13 @@ public class Lexer {
     }
 
     public static void main(String[] args) {
-        Lexer lexer = new Lexer();
-        lexer.tokenize();
-        lexer.displayTokens();
+        Lexer lexer1 = new Lexer("src/main/C/c_code.c");
+        lexer1.tokenize();
+        lexer1.displayTokens();
+        System.out.println("-------------------------------------------------");
+        Lexer lexer2 = new Lexer("src/main/C/c_code2.c");
+        lexer2.tokenize();
+        lexer2.displayTokens();
     }
 
 }
