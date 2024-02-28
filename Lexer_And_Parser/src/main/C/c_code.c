@@ -38,6 +38,7 @@ struct Point5 {
 //--------------------------------
 
 int main() {
+    enum {RED, GREEN, BLUE} color;
     // Declare variables
     int integerVariable = 42, z, h;
     char tt = 'r';
