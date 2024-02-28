@@ -26,6 +26,9 @@ int result = (x > y) ? x : y;  // Ternary operator
 
 // Bitwise operators
 int a = 12, b = 25;
+int *c;
+x = a * b;
+a+++b;
 printf("Bitwise AND: %d\n", a & b);
 printf("Bitwise XOR: %d\n", a ^ b);
 
