@@ -111,8 +111,8 @@
                         <AnchorPane id="Content" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-1.0" minWidth="-1.0" prefHeight="572.0" prefWidth="439.0">
                            <children>
                               <GridPane fx:id="lineNumberPane" layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="50.0" minHeight="-1.0" minWidth="-1.0" prefHeight="572.0" prefWidth="41.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="2.0">
-                     <!-- Add labels for line numbers here -->
-                  </GridPane>
+                                 <!-- Add labels for line numbers here -->
+                              </GridPane>
                               <TextArea fx:id="codeTextArea" layoutX="50.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="572.0" prefWidth="440.8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font size="13.0" />

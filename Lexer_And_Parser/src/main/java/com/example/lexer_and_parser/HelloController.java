@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 
@@ -27,7 +28,10 @@ public class HelloController {
 
     @FXML
     protected void initialize() {
-        System.out.println("Initialization of HelloController");
+
+        codeTextArea.setOnMouseClicked((MouseEvent event) -> {
+            updateLineNumbers(codeTextArea.getText());
+        });
 
         // Add listener to the codeTextArea text property
         codeTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
