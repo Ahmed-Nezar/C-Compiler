@@ -2,6 +2,7 @@ package com.example.lexer_and_parser;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +48,20 @@ public class Lexer {
         predefinedTokens.put("Keywords", cKeywords);
     }
 
+    public void changePath(String path){
+        reader = new cReader(path);
+    }
+
     public void tokenize() {
+
+        // Clear the dictionary and tokens
+        dictKeys.clear();
+        Enumeration<String> keys = tokens.keys();
+        while (keys.hasMoreElements()) {
+            tokens.remove(keys.nextElement());
+        }
+        // ------------------------------
+
         ArrayList<String> str_values = new ArrayList<>();
         ArrayList<String> char_values = new ArrayList<>();
         ArrayList<String> operator_values = new ArrayList<>();
@@ -58,24 +72,23 @@ public class Lexer {
         ArrayList<String> id_function = new ArrayList<>();
         ArrayList<String> id_variable = new ArrayList<>();
         ArrayList<String> id_struct = new ArrayList<>();
-
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
         String num_regex = "(['+']|-)?\\d+(\\.\\d+)?(e(['+']|-)?\\d+)?";
         Pattern tokenPattern = Pattern.compile(
-            "\"[^\"]*\"|" +             // Match double-quoted strings
-            "'.'|" +                    // Match single characters within single quotes
-            num_regex + "|" +           // Match numbers
-            "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Functions)
-            "\\}(?:\\s*\\w+)?\\s*;|" + // Match End Block of Struct
-            "^(struct|typedef( )struct)\\s+(\\w+)\\s*[\\{|;]|" + // Match identifiers (Structs)
-            "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b((?!\\()|(?!\\{))|" + // Match identifiers (Variables)
-            "\\(|\\)|\\{|\\}|;|,|" +    // Match parentheses, braces, semicolon, comma
-            "\\+\\+|--|==|!=|<=|>=|&&|" + // Match comparison and logical operators
-            "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
-            "\\+|\\*|/|%|<|>|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\>\\>\\>\\=|" + // Match arithmetic and bitwise operators
-            "\\-|\\+|\\*|\\=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\>\\>\\>|\\?|" + // Match miscellaneous operators
-            "\\:\\:|\\?\\:|\\+\\+|\\-\\-|\\." // Match other operators
+                "\"[^\"]*\"|" +             // Match double-quoted strings
+                        "'.'|" +                    // Match single characters within single quotes
+                        num_regex + "|" +           // Match numbers
+                        "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Functions)
+                        "\\}(?:\\s*\\w+)?\\s*;|" + // Match End Block of Struct
+                        "^(struct|typedef( )struct)\\s+(\\w+)\\s*[\\{|;]|" + // Match identifiers (Structs)
+                        "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b((?!\\()|(?!\\{))|" + // Match identifiers (Variables)
+                        "\\(|\\)|\\{|\\}|;|,|" +    // Match parentheses, braces, semicolon, comma
+                        "\\+\\+|--|==|!=|<=|>=|&&|" + // Match comparison and logical operators
+                        "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
+                        "\\+|\\*|/|%|<|>|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\>\\>\\>\\=|" + // Match arithmetic and bitwise operators
+                        "\\-|\\+|\\*|\\=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\>\\>\\>|\\?|" + // Match miscellaneous operators
+                        "\\:\\:|\\?\\:|\\+\\+|\\-\\-|\\." // Match other operators
         );
         boolean isStruct = false;
         for (String line : lines) {
@@ -235,9 +248,9 @@ public class Lexer {
         lexer1.tokenize();
         lexer1.displayTokens();
         System.out.println("-------------------------------------------------");
-        Lexer lexer2 = new Lexer("src/main/C/c_code2.c");
-        lexer2.tokenize();
-        lexer2.displayTokens();
+        lexer1.changePath("src/main/C/c_code2.c");
+        lexer1.tokenize();
+        lexer1.displayTokens();
     }
 
 }

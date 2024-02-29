@@ -15,6 +15,7 @@ public class cReader {
         path = p;
     }
     public ArrayList<String> getClines() {
+        cLines.clear();
         // Specify the path to your .c file
         String filePath = path;
 
