@@ -37,6 +37,36 @@ struct Point5 {
 };
 //--------------------------------
 
+// Implementing functions
+int add(int a, int b) {
+    return a + b;
+}
+
+void printHello() {
+    printf("Hello, World!\n");
+}
+
+bool isEven(int n) {
+    return n % 2 == 0;
+}
+
+float divide(float a, float b) {
+    return a / b;
+}
+
+double multiply(double a, double b) {
+    return a * b;
+}
+
+long long int power(int a, int b) {
+    long long int result = 1;
+    for (int i = 0; i < b; i++) {
+        result *= a;
+    }
+    return result;
+}
+//--------------------------------
+
 int main() {
     enum {RED, GREEN, BLUE} color;
     // Declare variables
