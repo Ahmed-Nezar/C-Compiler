@@ -70,10 +70,20 @@ long long int power(int a, int b) {
 int main() {
     enum {RED, GREEN, BLUE} color;
     // Declare variables
-    int integerVariable = 42, z, h;
+    int integerVariable = 42.3, z, h;
+    int test11 = 3451e3;
     char tt = 'r';
     str s = "oma";
     float floatVariable = 3.14;
+    // Tricky Data Type Test Case
+    long long x = 3.16161111LL;
+    unsigned long long x = 3.16161111ULL;
+    long y = 1511164.161664L;
+    unsigned long y = 1551166ul;
+    unsigned long yy = 83166.166e-2UL;
+    bool x;
+    // Struct Test Case
+    Point1 Point1; Point2 Point2;
     double sum;
 
     sum = integerVariable + floatVariable;

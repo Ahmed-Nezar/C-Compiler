@@ -68,6 +68,8 @@ public class Lexer {
         ArrayList<String> puncatuation_values = new ArrayList<>();
         ArrayList<String> int_values = new ArrayList<>();
         ArrayList<String> float_values = new ArrayList<>();
+        ArrayList<String> long_values = new ArrayList<>();
+        ArrayList<String> long_long_values = new ArrayList<>();
         ArrayList<String> keyword_values = new ArrayList<>();
         ArrayList<String> id_function = new ArrayList<>();
         ArrayList<String> id_variable = new ArrayList<>();
@@ -75,10 +77,11 @@ public class Lexer {
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
         String num_regex = "(['+']|-)?\\d+(\\.\\d+)?(e(['+']|-)?\\d+)?";
+        String num_dataType_regex = "(ULL|LL|L|UL|F|ull|ll|l|ul|f)?";
         Pattern tokenPattern = Pattern.compile(
                 "\"[^\"]*\"|" +             // Match double-quoted strings
                         "'.'|" +                    // Match single characters within single quotes
-                        num_regex + "|" +           // Match numbers
+                        num_regex + num_dataType_regex + "|" +           // Match numbers
                         "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Functions)
                         "\\}(?:\\s*\\w+)?\\s*;|" + // Match End Block of Struct
                         "^(struct|typedef( )struct)\\s+(\\w+)\\s*[\\{|;]|" + // Match identifiers (Structs)
@@ -91,7 +94,9 @@ public class Lexer {
                         "\\:\\:|\\?\\:|\\+\\+|\\-\\-|\\." // Match other operators
         );
         boolean isStruct = false;
+        boolean structDataType = false;
         for (String line : lines) {
+            structDataType = false;
             // Skip lines starting with "#" and comments
             if (!line.trim().startsWith("#")) {
                 line = removeComments(line);
@@ -112,12 +117,19 @@ public class Lexer {
                     }
                     if (isPunctuation(token)) {
                         puncatuation_values.add(token);
+                        // Disable Struct Data Type Flag
+                        if (token.equals(";"))
+                            structDataType = false;
                     } else if (isOperator(token)) {
                         operator_values.add(token);
                     } else if (Character.isDigit(token.charAt(0))) {
-                        if (!token.contains(".")){
+                        if (token.matches(num_regex + "(ul|UL|l|L)")) {
+                            long_values.add(token);
+                        } else if (token.matches(num_regex + "(ull|ULL|ll|LL)")) {
+                            long_long_values.add(token);
+                        } else if (!token.contains(".") && !token.contains("e")){
                             int_values.add(token);
-                        }else{
+                        } else{
                             float_values.add(token);
                         }
                     } else if (token.startsWith("'") && token.endsWith("'")) {
@@ -130,8 +142,12 @@ public class Lexer {
                         }
                         keyword_values.add(token);
                     } else {
+                        if (id_struct.contains(token) && !structDataType){
+                            id_struct.add(token);
+                            structDataType = true;
+                        }
                         // Check if the token is a function or a variable
-                        if (isFunction(token)) {
+                        else if (isFunction(token)) {
                             token = token.replaceFirst("\\(", "");
                             puncatuation_values.add("(");
                             if (isKeyword(token))
@@ -178,6 +194,8 @@ public class Lexer {
         dictKeys.add("Puncatuations");
         dictKeys.add("Integers");
         dictKeys.add("Floats");
+        dictKeys.add("Long");
+        dictKeys.add("Long Long");
         dictKeys.add("Keywords");
         dictKeys.add("Identifiers (Functions)");
         dictKeys.add("Identifiers (Variables)");
@@ -188,10 +206,12 @@ public class Lexer {
         tokens.put(dictKeys.get(3), puncatuation_values);
         tokens.put(dictKeys.get(4), int_values);
         tokens.put(dictKeys.get(5), float_values);
-        tokens.put(dictKeys.get(6), keyword_values);
-        tokens.put(dictKeys.get(7), id_function);
-        tokens.put(dictKeys.get(8), id_variable);
-        tokens.put(dictKeys.get(9), id_struct);
+        tokens.put(dictKeys.get(6), long_values);
+        tokens.put(dictKeys.get(7), long_long_values);
+        tokens.put(dictKeys.get(8), keyword_values);
+        tokens.put(dictKeys.get(9), id_function);
+        tokens.put(dictKeys.get(10), id_variable);
+        tokens.put(dictKeys.get(11), id_struct);
     }
 
 
