@@ -6,12 +6,17 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Lexer {
     private static Dictionary<String, ArrayList<String>> predefinedTokens = new Hashtable<>();
     public cReader reader;
     private ArrayList<String> dictKeys = new ArrayList<>();
     private Dictionary<String, ArrayList<String>> tokens = new Hashtable<>();
+    /////////////////////////////////
+    private ArrayList<Token> tk = new ArrayList<>();
+    /////////////////////////////////
     public Lexer(String path){
         reader = new cReader(path);
         ArrayList<String> cOperators = new ArrayList<>();
@@ -51,6 +56,7 @@ public class Lexer {
 
     public void changePath(String path){
         reader = new cReader(path);
+        tk.clear();
     }
 
     public void tokenize() {
@@ -63,17 +69,6 @@ public class Lexer {
         }
         // ------------------------------
 
-        ArrayList<String> str_values = new ArrayList<>();
-        ArrayList<String> char_values = new ArrayList<>();
-        ArrayList<String> operator_values = new ArrayList<>();
-        ArrayList<String> puncatuation_values = new ArrayList<>();
-        ArrayList<String> int_values = new ArrayList<>();
-        ArrayList<String> float_values = new ArrayList<>();
-        ArrayList<String> long_values = new ArrayList<>();
-        ArrayList<String> long_long_values = new ArrayList<>();
-        ArrayList<String> keyword_values = new ArrayList<>();
-        ArrayList<String> id_function = new ArrayList<>();
-        ArrayList<String> id_variable = new ArrayList<>();
         ArrayList<String> id_struct = new ArrayList<>();
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
@@ -111,111 +106,91 @@ public class Lexer {
                         isStruct = false;
                         String filteredStr = token.replaceAll("\\s", "").replaceAll(";", "")
                                 .replaceAll("}", "");
-                        puncatuation_values.add("}");
-                        puncatuation_values.add(";");
+                        tk.add(new Token("Puncatuations", "}", lines.indexOf(line) + 1));
+                        tk.add(new Token("Puncatuations", ";", lines.indexOf(line) + 1));
                         if (!filteredStr.isEmpty()){
                             id_struct.add(filteredStr);
+                            tk.add(new Token("Identifiers (Structs)", filteredStr, lines.indexOf(line) + 1));
                         }
                         continue;
                     }
                     if (isPunctuation(token)) {
-                        puncatuation_values.add(token);
+                        tk.add(new Token("Puncatuations", token, lines.indexOf(line) + 1));
                         // Disable Struct Data Type Flag
                         if (token.equals(";"))
                             structDataType = false;
                     } else if (isOperator(token)) {
-                        operator_values.add(token);
+                        tk.add(new Token("Operators", token, lines.indexOf(line) + 1));
                     } else if (token.matches(binary_octal_hex_regex + "|" + num_regex + num_dataType_regex)) {
                         if (token.matches(num_regex + "(ul|UL|l|L)")) {
-                            long_values.add(token);
+                            tk.add(new Token("Long", token, lines.indexOf(line) + 1));
                         } else if (token.matches(num_regex + "(ull|ULL|ll|LL)")) {
-                            long_long_values.add(token);
+                            tk.add(new Token("Long Long", token, lines.indexOf(line) + 1));
                         } else if (token.matches(binary_octal_hex_regex) ||
-                                token.matches("[1-9][0-9]*")){
-                            int_values.add(token);
+                                token.matches("0|([1-9][0-9]*)")){
+                            tk.add(new Token("Integers", token, lines.indexOf(line) + 1));
                         } else{
-                            float_values.add(token);
+                            tk.add(new Token("Floats", token, lines.indexOf(line) + 1));
                         }
                     } else if (token.startsWith("'") && token.endsWith("'")) {
-                        char_values.add(token);
+                        tk.add(new Token("Characters", token, lines.indexOf(line) + 1));
                     } else if (token.startsWith("\"") && token.endsWith("\"")) {
-                        str_values.add(token);
+                        tk.add(new Token("Strings", token, lines.indexOf(line) + 1));
                     } else if (isKeyword(token)) {
                         if (token.equals("struct")) {
                             isStruct = true;
                         }
-                        keyword_values.add(token);
+                        tk.add(new Token("Keywords", token, lines.indexOf(line) + 1));
                     } else {
                         if (id_struct.contains(token) && !structDataType){
                             id_struct.add(token);
+                            tk.add(new Token("Identifiers (Structs)", token, lines.indexOf(line) + 1));
                             structDataType = true;
                         }
                         // Check if the token is a function or a variable
                         else if (isFunction(token)) {
                             token = token.replaceFirst("\\(", "");
-                            puncatuation_values.add("(");
-                            if (isKeyword(token))
-                                keyword_values.add(token);
-                            else
-                                id_function.add(token);
+                            tk.add(new Token("Puncatuations", "(", lines.indexOf(line) + 1));
+                            if (isKeyword(token)) {
+                                tk.add(new Token("Keywords", token, lines.indexOf(line) + 1));
+                            } else {
+                                tk.add(new Token("Identifiers (Functions)", token, lines.indexOf(line) + 1));
+                            }
                         } else if (isStruct(token)) {
                             isStruct = true;
                             token = token.replaceFirst("typedef", "");
-                            keyword_values.add("typedef");
+                            tk.add(new Token("Keywords", "typedef", lines.indexOf(line) + 1));
 
                             token = token.replaceFirst("struct", "");
-                            keyword_values.add("struct");
+                            tk.add(new Token("Keywords", "struct", lines.indexOf(line) + 1));
 
                             token = token.replaceAll("\\s", "");
                             while(!token.equals(token.replaceFirst("\\{", ""))){
                                 token = token.replaceFirst("\\{", "");
-                                puncatuation_values.add("{");
+                                tk.add(new Token("Puncatuations", "{", lines.indexOf(line) + 1));
                             }
                             while(!token.equals(token.replaceFirst(";", ""))){
                                 token = token.replaceFirst(";", "");
-                                puncatuation_values.add(";");
+                                tk.add(new Token("Puncatuations", ";", lines.indexOf(line) + 1));
                             }
                             id_struct.add(token);
+                            tk.add(new Token("Identifiers (Structs)", token, lines.indexOf(line) + 1));
+
                         } else {
                             if (token.contains("}")) {
                                 token = token.replaceFirst("}", "");
-                                puncatuation_values.add("}");
+                                tk.add(new Token("Puncatuations", "}", lines.indexOf(line) + 1));
                             }
                             if (token.contains(";")) {
                                 token = token.replaceFirst(";", "");
-                                puncatuation_values.add(";");
+                                tk.add(new Token("Puncatuations", ";", lines.indexOf(line) + 1));
                             }
-                            id_variable.add(token);
+                            tk.add(new Token("Identifiers (Variables)", token, lines.indexOf(line) + 1));
                         }
                     }
                 }
             }
         }
-
-        dictKeys.add("Strings");
-        dictKeys.add("Characters");
-        dictKeys.add("Operators");
-        dictKeys.add("Puncatuations");
-        dictKeys.add("Integers");
-        dictKeys.add("Floats");
-        dictKeys.add("Long");
-        dictKeys.add("Long Long");
-        dictKeys.add("Keywords");
-        dictKeys.add("Identifiers (Functions)");
-        dictKeys.add("Identifiers (Variables)");
-        dictKeys.add("Identifiers (Structs)");
-        tokens.put(dictKeys.get(0), str_values);
-        tokens.put(dictKeys.get(1), char_values);
-        tokens.put(dictKeys.get(2), operator_values);
-        tokens.put(dictKeys.get(3), puncatuation_values);
-        tokens.put(dictKeys.get(4), int_values);
-        tokens.put(dictKeys.get(5), float_values);
-        tokens.put(dictKeys.get(6), long_values);
-        tokens.put(dictKeys.get(7), long_long_values);
-        tokens.put(dictKeys.get(8), keyword_values);
-        tokens.put(dictKeys.get(9), id_function);
-        tokens.put(dictKeys.get(10), id_variable);
-        tokens.put(dictKeys.get(11), id_struct);
     }
 
 
@@ -254,16 +229,10 @@ public class Lexer {
     }
 
     public void displayTokens() {
-        for (int i = 0; i < tokens.size(); i++) {
-            System.out.print(dictKeys.get(i) + ": ");
-            String values = "";
-            for (int j = 0; j < tokens.get(dictKeys.get(i)).size(); j++) {
-                System.out.print(tokens.get(dictKeys.get(i)).get(j));
-                if (j < tokens.get(dictKeys.get(i)).size() - 1) {
-                    System.out.print(", ");
-                }
-            }
-            System.out.println();
+        Collections.sort(tk, Comparator.comparing(Token::getName));
+
+        for (int i = 0; i < tk.size(); i++) {
+            tk.get(i).displayToken(); // Call displayToken on each Token
         }
     }
 

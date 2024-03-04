@@ -13,5 +13,10 @@ public class Token {
         numObj++;
         this.entryNum = numObj;
     }
-    public void displayToken(){}
+    public void displayToken() {
+        System.out.println("Name: " + name + ", Attribute Value: " + attrVal + ", Line Number: " + lineNum);
+    }
+    public String getName() {
+        return name;
+    }
 }
