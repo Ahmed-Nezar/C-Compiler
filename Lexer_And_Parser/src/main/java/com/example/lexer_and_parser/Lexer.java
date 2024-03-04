@@ -42,6 +42,7 @@ public class Lexer {
         cKeywords.add("short");cKeywords.add("signed");cKeywords.add("sizeof");cKeywords.add("static");
         cKeywords.add("struct");cKeywords.add("switch");cKeywords.add("typedef");cKeywords.add("union");
         cKeywords.add("unsigned");cKeywords.add("void");cKeywords.add("volatile");cKeywords.add("while");
+        cKeywords.add("inline");cKeywords.add("restrict");
 
         predefinedTokens.put("Operators", cOperators);
         predefinedTokens.put("Punctuations", cPunctuation);
@@ -77,21 +78,23 @@ public class Lexer {
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
         String num_regex = "(['+']|-)?\\d+(\\.\\d+)?(e(['+']|-)?\\d+)?";
+        String binary_octal_hex_regex = "(\\+|-)?(((0b|0B)[0-1]++)|(0[0-7]+)|((0x|0X)[0-9a-fA-F]+))";
         String num_dataType_regex = "(ULL|LL|L|UL|F|ull|ll|l|ul|f)?";
         Pattern tokenPattern = Pattern.compile(
                 "\"[^\"]*\"|" +             // Match double-quoted strings
-                        "'.'|" +                    // Match single characters within single quotes
-                        num_regex + num_dataType_regex + "|" +           // Match numbers
-                        "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Functions)
-                        "\\}(?:\\s*\\w+)?\\s*;|" + // Match End Block of Struct
-                        "^(struct|typedef( )struct)\\s+(\\w+)\\s*[\\{|;]|" + // Match identifiers (Structs)
-                        "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b((?!\\()|(?!\\{))|" + // Match identifiers (Variables)
-                        "\\(|\\)|\\{|\\}|;|,|" +    // Match parentheses, braces, semicolon, comma
-                        "\\+\\+|--|==|!=|<=|>=|&&|" + // Match comparison and logical operators
-                        "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
-                        "\\+|\\*|/|%|<|>|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\>\\>\\>\\=|" + // Match arithmetic and bitwise operators
-                        "\\-|\\+|\\*|\\=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\>\\>\\>|\\?|" + // Match miscellaneous operators
-                        "\\:\\:|\\?\\:|\\+\\+|\\-\\-|\\." // Match other operators
+                binary_octal_hex_regex + "|" +  // Match binary, octal, decimal, and hexadecimal numbers
+                "'.'|" +                    // Match single characters within single quotes
+                num_regex + num_dataType_regex + "|" +           // Match numbers
+                "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Functions)
+                "\\}(?:\\s*\\w+)?\\s*;|" + // Match End Block of Struct
+                "^(struct|typedef( )struct)\\s+(\\w+)\\s*[\\{|;]|" + // Match identifiers (Structs)
+                "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b((?!\\()|(?!\\{))|" + // Match identifiers (Variables)
+                "\\(|\\)|\\{|\\}|;|,|" +    // Match parentheses, braces, semicolon, comma
+                "\\+\\+|--|==|!=|<=|>=|&&|" + // Match comparison and logical operators
+                "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
+                "\\+|\\*|/|%|<|>|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\>\\>\\>\\=|" + // Match arithmetic and bitwise operators
+                "\\-|\\+|\\*|\\=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\>\\>\\>|\\?|" + // Match miscellaneous operators
+                "\\:\\:|\\?\\:|\\+\\+|\\-\\-|\\." // Match other operators
         );
         boolean isStruct = false;
         boolean structDataType = false;
@@ -122,12 +125,13 @@ public class Lexer {
                             structDataType = false;
                     } else if (isOperator(token)) {
                         operator_values.add(token);
-                    } else if (Character.isDigit(token.charAt(0))) {
+                    } else if (token.matches(binary_octal_hex_regex + "|" + num_regex + num_dataType_regex)) {
                         if (token.matches(num_regex + "(ul|UL|l|L)")) {
                             long_values.add(token);
                         } else if (token.matches(num_regex + "(ull|ULL|ll|LL)")) {
                             long_long_values.add(token);
-                        } else if (!token.contains(".") && !token.contains("e")){
+                        } else if (token.matches(binary_octal_hex_regex) ||
+                                token.matches("[1-9][0-9]*")){
                             int_values.add(token);
                         } else{
                             float_values.add(token);
