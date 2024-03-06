@@ -75,7 +75,7 @@
                               <Font size="24.0" fx:id="x1" />
                            </font>
                         </Label>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B;" text="Upload File" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onUploadButtonClick" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B;" text="Upload File" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="18.0" />
                            </font>
