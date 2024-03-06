@@ -34,7 +34,35 @@ public class cReader {
             // Handle any IO exceptions
             e.printStackTrace();
         }
+        cleanClines();
         return cLines;
+    }
+
+    private void cleanClines(){
+        boolean blockComment = false;
+        for (int i = 0; i < cLines.size(); i++) {
+            String line = cLines.get(i);
+            if (blockComment) {
+                if (line.matches("(.)*\\*/")) {
+                    blockComment = false;
+                }
+                cLines.set(i, "");
+            } else {
+                if (line.matches("(.)*//(.)*")){
+                    cLines.set(i, cLines.get(i).replaceAll("//(.)*", ""));
+                }
+                else if (line.matches("(.)*/\\*(.)*\\*/")){
+                    cLines.set(i, cLines.get(i).replaceAll("/\\*(.)*\\*/", ""));
+                }
+                else if (line.matches("(.)*/\\*(.)*")) {
+                    blockComment = true;
+                    cLines.set(i, cLines.get(i).replaceAll("/\\*(.)*", ""));
+                }
+            }
+            if (line.matches("(.)*#(.)*")){
+                cLines.set(i, cLines.get(i).replaceAll("#(.)*", ""));
+            }
+        }
     }
 
     public void clear(){

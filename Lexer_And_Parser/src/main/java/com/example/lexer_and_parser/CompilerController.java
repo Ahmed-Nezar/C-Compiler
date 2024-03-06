@@ -134,7 +134,7 @@ public class CompilerController {
         fileChooser.setTitle("Select .c File");
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("C files (*.c)", "*.c");
         fileChooser.getExtensionFilters().add(extFilter);
-        fileChooser.setInitialDirectory(new File("C:\\Users\\Fighter-Predator\\Documents\\ASU Repos\\Design of Compilers\\Lexer_And_Parser\\src\\main\\C"));
+        fileChooser.setInitialDirectory(new File("src/main/C"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             lexer = new Lexer(file.getAbsolutePath());
@@ -172,12 +172,11 @@ public class CompilerController {
     }
     private void updateLineNumbers(String text) {
         lineNumberPane.clear();
+        if (text.isEmpty()) return;
         String[] lines = text.split("\n");
         for (int i = 1; i <= lines.length; i++) {
             Label label = new Label(Integer.toString(i + 1));
             label.setFont(new Font(13));
-
-//            lineNumberPane.add(label, 0, i);
             lineNumberPane.appendText(i + "\n");
         }
     }

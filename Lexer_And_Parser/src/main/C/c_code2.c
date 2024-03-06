@@ -16,9 +16,9 @@ int hexValue2 = 0xe464;
 int octValue = 0123;
 int binary = 0b0110;
 int floatValue = 46613e4;
-int integerTricky = +-+-+ 143;
-int integerTricky2 = +-+-+- 763;
-int integerTricky3 = -+-+- 8964;
+int integerTricky = +-+-+143;
+int integerTricky2 = +-+-+-  763;
+int integerTricky3 = -+-+-8964;
 int integerTricky4 = -+-+-+ 9316;
 
 // Pointers and dereferencing

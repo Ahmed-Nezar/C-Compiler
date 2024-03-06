@@ -26,12 +26,11 @@ public class Lexer {
         cOperators.add(">>");cOperators.add(">>>");cOperators.add("?:");cOperators.add("++");cOperators.add("--");
         cOperators.add("+=");cOperators.add("-=");cOperators.add("*=");cOperators.add("/=");cOperators.add("%=");
         cOperators.add("&=");cOperators.add("|=");cOperators.add("^=");cOperators.add("<<=");cOperators.add(">>=");
-        cOperators.add(">>>=");cOperators.add("->");cOperators.add(".");cOperators.add("?");
+        cOperators.add(">>>=");cOperators.add("->");cOperators.add(".");cOperators.add("?");cOperators.add(":");
 
         // Add C-language punctuations to the ArrayList
         cPunctuation.add("(");cPunctuation.add(")");cPunctuation.add("{");cPunctuation.add("}");
-        cPunctuation.add("]");cPunctuation.add(";");cPunctuation.add(",");
-        cPunctuation.add(":");cPunctuation.add("[");
+        cPunctuation.add("]");cPunctuation.add(";");cPunctuation.add(",");cPunctuation.add("[");
 
         // Add C-language keywords to the ArrayList
         cKeywords.add("auto");cKeywords.add("break");cKeywords.add("case");cKeywords.add("char");
@@ -61,12 +60,12 @@ public class Lexer {
 
     public void tokenize() {
         tk.clear();
-
         ArrayList<String> id_struct = new ArrayList<>();
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
-        String num_regex = "(['+']|-)?\\d+(\\.\\d+)?(e(['+']|-)?\\d+)?";
-        String binary_octal_hex_regex = "(\\+|-)?(((0b|0B)[0-1]++)|(0[0-7]+)|((0x|0X)[0-9a-fA-F]+))";
+        String signRegex = "((\\+|-)*\\+?|(-|\\+)*-?)(\\s)*";
+        String num_regex = signRegex + "\\d+(\\.\\d+)?(e(['+']|-)?\\d+)?";
+        String binary_octal_hex_regex = signRegex + "(((0b|0B)[0-1]++)|(0[0-7]+)|((0x|0X)[0-9a-fA-F]+))";
         String num_dataType_regex = "(ULL|LL|L|UL|F|ull|ll|l|ul|f)?";
         Pattern tokenPattern = Pattern.compile(
                 "\"[^\"]*\"|" +             // Match double-quoted strings
@@ -82,7 +81,7 @@ public class Lexer {
                 "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
                 "\\+|\\*|/|%|<|>|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\>\\>\\>\\=|" + // Match arithmetic and bitwise operators
                 "\\-|\\+|\\*|\\=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\>\\>\\>|\\?|" + // Match miscellaneous operators
-                "\\:\\:|\\?\\:|\\+\\+|\\-\\-|\\." // Match other operators
+                "\\:|\\+\\+|\\-\\-|\\." // Match other operators
         );
         boolean isStruct = false;
         boolean structDataType = false;
@@ -90,7 +89,6 @@ public class Lexer {
             structDataType = false;
             // Skip lines starting with "#" and comments
             if (!line.trim().startsWith("#")) {
-                line = removeComments(line);
                 // Match tokens using regular expression
                 Matcher matcher = tokenPattern.matcher(line);
                 while (matcher.find()) {
@@ -120,7 +118,7 @@ public class Lexer {
                         } else if (token.matches(num_regex + "(ull|ULL|ll|LL)")) {
                             tk.add(new Token("Long Long", token, lines.indexOf(line) + 1));
                         } else if (token.matches(binary_octal_hex_regex) ||
-                                token.matches("0|([1-9][0-9]*)")){
+                                token.matches(signRegex + "(0|([1-9][0-9]*))")){
                             tk.add(new Token("Integers", token, lines.indexOf(line) + 1));
                         } else{
                             tk.add(new Token("Floats", token, lines.indexOf(line) + 1));
@@ -200,15 +198,6 @@ public class Lexer {
         return token.matches("[a-zA-Z_][a-zA-Z0-9_]*\\s*(=\\s*.*|;)");
     }
 
-    private String removeComments(String line) {
-        // Remove single-line comments starting with "//"
-        line = line.replaceAll("//.*", "");
-        // Remove block comments "/* */"
-        line = line.replaceAll("/\\*.*?\\*/", "");
-        return line;
-    }
-
-
     private boolean isOperator(String token) {
         return predefinedTokens.get("Operators").contains(token);
     }
@@ -235,9 +224,9 @@ public class Lexer {
 
     public static void main(String[] args) {
         Lexer lexer1 = new Lexer("src/main/C/c_code.c");
-        lexer1.tokenize();
-        lexer1.displayTokens();
-        System.out.println("-------------------------------------------------");
+//        lexer1.tokenize();
+//        lexer1.displayTokens();
+//        System.out.println("-------------------------------------------------");
         lexer1.changePath("src/main/C/c_code2.c");
         lexer1.tokenize();
         lexer1.displayTokens();
