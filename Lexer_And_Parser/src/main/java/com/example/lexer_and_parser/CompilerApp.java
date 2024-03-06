@@ -10,8 +10,10 @@ import java.io.IOException;
 public class CompilerApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(CompilerApp.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 900, 600);
+        FXMLLoader fxmlLoader = new FXMLLoader(CompilerApp.class.getResource("CompilerApplication.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 1200, 600);
+        stage.setMinWidth(1200);
+        stage.setMinHeight(600);
         stage.setTitle("C Lexer & Parser");
         stage.setScene(scene);
         stage.show();

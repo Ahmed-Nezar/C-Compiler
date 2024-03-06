@@ -1,12 +1,16 @@
 package com.example.lexer_and_parser;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -32,7 +36,7 @@ public class CompilerController {
     }
 
     @FXML
-    private GridPane lineNumberPane;
+    private TextArea lineNumberPane;
 
     @FXML
     private TextArea codeTextArea;
@@ -42,20 +46,22 @@ public class CompilerController {
 
     @FXML
     protected void initialize() {
-
-        codeTextArea.setOnMouseClicked((MouseEvent event) -> {
-            updateLineNumbers(codeTextArea.getText());
-        });
-
         // Add listener to the codeTextArea text property
         codeTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
-
             updateLineNumbers(newValue);
         });
+        codeTextArea.scrollTopProperty().addListener((observable, oldValue, newValue) -> {
+            lineNumberPane.setScrollTop(newValue.doubleValue());
+        });
+
     }
 
     @FXML
     protected void onTokenizeButtonClick(){
+        if (codeTextArea.getText().isEmpty()) {
+            return;
+        }
+        mainContainer.getChildren().clear();
         lexer.tokenize();
         ArrayList<Token> tokens = lexer.gtTokens();
 
@@ -69,7 +75,10 @@ public class CompilerController {
             // Create label if not already created
             if (!tokenTables.containsKey(name)) {
                 VBox vbox = new VBox();
-                Label label = new Label(name);
+                Label label = new Label(name + ":");
+                label.setFont(new Font(15));
+                label.setStyle("-fx-font-weight: bold; -fx-underline: true;");
+                label.setPadding(new javafx.geometry.Insets(0, 0, 7, 0));
                 vbox.getChildren().add(label);
                 tokenTables.put(name, vbox);
             }
@@ -94,7 +103,19 @@ public class CompilerController {
                 attributeColumn.setCellValueFactory(new PropertyValueFactory<>("attrVal"));
                 TableColumn<Token, Integer> lineNumberColumn = new TableColumn<>("Line Number");
                 lineNumberColumn.setCellValueFactory(new PropertyValueFactory<>("lineNum"));
-                tableView.getColumns().addAll(attributeColumn, lineNumberColumn);
+                lineNumberColumn.setCellFactory(tc -> new TableCell<Token, Integer>() {
+                    @Override
+                    protected void updateItem(Integer item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                        } else {
+                            setText(item.toString());
+                            setAlignment(Pos.CENTER);
+                        }
+                    }
+                });
+                tableView.getColumns().addAll(lineNumberColumn, attributeColumn);
                 vbox.getChildren().add(tableView);
             }
 
@@ -113,6 +134,7 @@ public class CompilerController {
         fileChooser.setTitle("Select .c File");
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("C files (*.c)", "*.c");
         fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.setInitialDirectory(new File("C:\\Users\\Fighter-Predator\\Documents\\ASU Repos\\Design of Compilers\\Lexer_And_Parser\\src\\main\\C"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             lexer = new Lexer(file.getAbsolutePath());
@@ -123,6 +145,19 @@ public class CompilerController {
                 e.printStackTrace();
             }
         }
+    }
+
+    @FXML
+    protected void onClearButtonClick() {
+        codeTextArea.clear();
+        updateLineNumbers("");
+        mainContainer.getChildren().clear();
+        lexer.clear();
+    }
+
+    @FXML
+    protected void onQuitButtonClick() {
+        Platform.exit();
     }
 
     private String loadFileContent(File file) throws IOException {
@@ -136,13 +171,14 @@ public class CompilerController {
         return content.toString();
     }
     private void updateLineNumbers(String text) {
-        lineNumberPane.getChildren().clear();
+        lineNumberPane.clear();
         String[] lines = text.split("\n");
-        for (int i = 0; i < lines.length; i++) {
+        for (int i = 1; i <= lines.length; i++) {
             Label label = new Label(Integer.toString(i + 1));
             label.setFont(new Font(13));
 
-            lineNumberPane.add(label, 0, i);
+//            lineNumberPane.add(label, 0, i);
+            lineNumberPane.appendText(i + "\n");
         }
     }
 }

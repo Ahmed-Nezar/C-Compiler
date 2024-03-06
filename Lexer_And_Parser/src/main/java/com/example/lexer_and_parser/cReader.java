@@ -14,6 +14,9 @@ public class cReader {
     cReader(String p){
         path = p;
     }
+    public ArrayList<String> cLinesGetter() {
+        return cLines;
+    }
     public ArrayList<String> getClines() {
         cLines.clear();
         // Specify the path to your .c file
@@ -32,5 +35,9 @@ public class cReader {
             e.printStackTrace();
         }
         return cLines;
+    }
+
+    public void clear(){
+        cLines.clear();
     }
 }

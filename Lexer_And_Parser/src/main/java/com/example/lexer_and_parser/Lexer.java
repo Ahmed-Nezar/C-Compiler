@@ -2,7 +2,6 @@ package com.example.lexer_and_parser;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,11 +11,7 @@ import java.util.Comparator;
 public class Lexer {
     private static Dictionary<String, ArrayList<String>> predefinedTokens = new Hashtable<>();
     public cReader reader;
-    private ArrayList<String> dictKeys = new ArrayList<>();
-    private Dictionary<String, ArrayList<String>> tokens = new Hashtable<>();
-    /////////////////////////////////
     private ArrayList<Token> tk = new ArrayList<>();
-    /////////////////////////////////
     public Lexer(String path){
         reader = new cReader(path);
         ArrayList<String> cOperators = new ArrayList<>();
@@ -59,15 +54,13 @@ public class Lexer {
         tk.clear();
     }
 
-    public void tokenize() {
+    public void clear(){
+        reader.clear();
+        tk.clear();
+    }
 
-        // Clear the dictionary and tokens
-        dictKeys.clear();
-        Enumeration<String> keys = tokens.keys();
-        while (keys.hasMoreElements()) {
-            tokens.remove(keys.nextElement());
-        }
-        // ------------------------------
+    public void tokenize() {
+        tk.clear();
 
         ArrayList<String> id_struct = new ArrayList<>();
         ArrayList<String> lines = reader.getClines();
@@ -231,8 +224,8 @@ public class Lexer {
     public void displayTokens() {
         Collections.sort(tk, Comparator.comparing(Token::getName));
 
-        for (int i = 0; i < tk.size(); i++) {
-            tk.get(i).displayToken(); // Call displayToken on each Token
+        for (Token token : tk) {
+            token.displayToken(); // Call displayToken on each Token
         }
     }
 
