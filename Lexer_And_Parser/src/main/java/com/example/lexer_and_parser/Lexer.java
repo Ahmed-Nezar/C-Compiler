@@ -236,6 +236,10 @@ public class Lexer {
         }
     }
 
+    public ArrayList<Token> gtTokens(){
+        return tk;
+    }
+
     public static void main(String[] args) {
         Lexer lexer1 = new Lexer("src/main/C/c_code.c");
         lexer1.tokenize();

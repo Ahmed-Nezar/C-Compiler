@@ -80,7 +80,7 @@
                               <Font size="18.0" />
                            </font>
                         </Button>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B;" text="Tokenize" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="2">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onTokenizeButtonClick" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B;" text="Tokenize" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -127,7 +127,17 @@
 
             <AnchorPane>
                <children>
-                  <Label alignment="CENTER" font="$x1" layoutX="20.0" layoutY="30.0" prefHeight="35.0" prefWidth="183.0" style="&#10;" text="Details" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                  <ScrollPane layoutX="20.0" layoutY="30.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="572.8" prefWidth="223.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <AnchorPane>
+                           <children>
+                              <VBox fx:id="mainContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
+                           <!-- Add VBox dynamically from the controller -->
+                        </VBox>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </ScrollPane>
                </children>
             </AnchorPane>
          </items>

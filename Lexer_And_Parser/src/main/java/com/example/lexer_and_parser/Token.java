@@ -19,4 +19,10 @@ public class Token {
     public String getName() {
         return name;
     }
+
+    public String getAttrVal() {return attrVal;}
+
+    public Integer getLineNum() {
+        return lineNum;
+    }
 }
