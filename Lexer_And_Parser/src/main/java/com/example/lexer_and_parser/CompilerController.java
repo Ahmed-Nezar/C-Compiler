@@ -2,16 +2,12 @@ package com.example.lexer_and_parser;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class HelloController {
+public class CompilerController {
     @FXML
     private Label welcomeText;
 
