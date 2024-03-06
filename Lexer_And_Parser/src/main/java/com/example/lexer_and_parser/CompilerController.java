@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class CompilerController {
+    private Lexer lexer;
     @FXML
     private Label welcomeText;
 
@@ -49,11 +50,11 @@ public class CompilerController {
         fileChooser.getExtensionFilters().add(extFilter);
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
+            lexer = new Lexer(file.getAbsolutePath());
             try {
                 String content = loadFileContent(file);
                 codeTextArea.setText(content);
             } catch (IOException e) {
-                // Handle IO exception
                 e.printStackTrace();
             }
         }
