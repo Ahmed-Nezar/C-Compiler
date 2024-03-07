@@ -64,9 +64,7 @@ public class CompilerController {
         mainContainer.getChildren().clear();
         lexer.tokenize();
         ArrayList<Token> tokens = lexer.gtTokens();
-
-        Collections.sort(tokens, Comparator.comparing(Token::getName));
-
+        tokens.sort(Comparator.comparing(Token::getName)); // Sort tokens by name
         HashMap<String, VBox> tokenTables = new HashMap<>();
 
         for (Token token : tokens) {
@@ -76,8 +74,9 @@ public class CompilerController {
             if (!tokenTables.containsKey(name)) {
                 VBox vbox = new VBox();
                 Label label = new Label(name + ":");
-                label.setFont(new Font(15));
-                label.setStyle("-fx-font-weight: bold; -fx-underline: true;");
+                label.setFont(new Font(16));
+                label.setStyle("-fx-font-weight: bold; -fx-underline: true;" +
+                            "-fx-font-family: 'Arial'; -fx-text-fill: #000000;-fx-font-size: 16px;");
                 label.setPadding(new javafx.geometry.Insets(0, 0, 7, 0));
                 vbox.getChildren().add(label);
                 tokenTables.put(name, vbox);
@@ -122,6 +121,9 @@ public class CompilerController {
             // Populate table with token details
             tableView.getItems().add(token);
         }
+
+        // Re-sort the tokens after the UI elements are populated
+        tokens.sort(Comparator.comparing(Token::getName));
 
         // Add all created VBox containers to the main layout
         // Assuming you have a VBox in your FXML file with fx:id="mainContainer"
