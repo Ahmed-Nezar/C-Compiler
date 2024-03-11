@@ -31,6 +31,7 @@ public class Lexer {
         // Add C-language punctuations to the ArrayList
         cPunctuation.add("(");cPunctuation.add(")");cPunctuation.add("{");cPunctuation.add("}");
         cPunctuation.add("]");cPunctuation.add(";");cPunctuation.add(",");cPunctuation.add("[");
+        cPunctuation.add("'");cPunctuation.add("\"");
 
         // Add C-language keywords to the ArrayList
         cKeywords.add("auto");cKeywords.add("break");cKeywords.add("case");cKeywords.add("char");
@@ -63,13 +64,16 @@ public class Lexer {
         ArrayList<String> id_struct = new ArrayList<>();
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
-        String num_regex = "\\d+(\\.\\d+)?(e(['+']|-)?\\d+)?";
+        String num_regex = "\\d+(\\.\\d+)?((e|E)(['+']|-)?\\d+)?";
         String binary_octal_hex_regex = "(((0b|0B)[0-1]++)|(0[0-7]+)|((0x|0X)[0-9a-fA-F]+))";
         String num_dataType_regex = "(ULL|LL|L|UL|F|ull|ll|l|ul|f)?";
+        String bad_Identifiers = "\\d+[a-zA-Z_]+\\d*";
         Pattern tokenPattern = Pattern.compile(
-                "\"[^\"]*\"|" +             // Match double-quoted strings
+                "\"(?:[^\"\\\\]|\\\\.)*\"|" +             // Match double-quoted strings
                 binary_octal_hex_regex + "|" +  // Match binary, octal, decimal, and hexadecimal numbers
                 "'.'|" +                    // Match single characters within single quotes
+                "\"|'|" +                                                // Match bad puncatuation
+                bad_Identifiers + "|" +     // Match bad variable names
                 num_regex + num_dataType_regex + "|" +           // Match numbers
                 "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Functions)
                 "\\}(?:\\s*\\w+)?\\s*;|" + // Match End Block of Struct
@@ -175,7 +179,11 @@ public class Lexer {
                                 token = token.replaceFirst(";", "");
                                 tk.add(new Token("Puncatuations", ";", lines.indexOf(line) + 1));
                             }
-                            tk.add(new Token("Identifiers (Variables)", token, lines.indexOf(line) + 1));
+                            if (token.matches(bad_Identifiers)){
+                                tk.add(new Token("Bad Identifiers", token, lines.indexOf(line) + 1));
+                            } else {
+                                tk.add(new Token("Identifiers (Variables)", token, lines.indexOf(line) + 1));
+                            }
                         }
                     }
                 }
@@ -210,8 +218,6 @@ public class Lexer {
     }
 
     public void displayTokens() {
-        Collections.sort(tk, Comparator.comparing(Token::getName));
-
         for (Token token : tk) {
             token.displayToken(); // Call displayToken on each Token
         }

@@ -122,9 +122,6 @@ public class CompilerController {
             tableView.getItems().add(token);
         }
 
-        // Re-sort the tokens after the UI elements are populated
-        tokens.sort(Comparator.comparing(Token::getName));
-
         // Add all created VBox containers to the main layout
         // Assuming you have a VBox in your FXML file with fx:id="mainContainer"
         mainContainer.getChildren().addAll(tokenTables.values());

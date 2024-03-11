@@ -91,7 +91,7 @@
                         <Font size="13.0" />
                      </font>
                   </TextArea>
-                  <TextArea fx:id="codeTextArea" editable="false" layoutX="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="572.0" prefWidth="440.8" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                  <TextArea fx:id="codeTextArea" editable="false" focusTraversable="false" layoutX="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="572.0" prefWidth="440.8" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                      <font>
                         <Font size="13.0" />
                      </font>
