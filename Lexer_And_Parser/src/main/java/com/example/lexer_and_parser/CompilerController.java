@@ -8,10 +8,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -21,8 +17,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 public class CompilerController {
@@ -64,7 +58,6 @@ public class CompilerController {
         mainContainer.getChildren().clear();
         lexer.tokenize();
         ArrayList<Token> tokens = lexer.gtTokens();
-        tokens.sort(Comparator.comparing(Token::getName)); // Sort tokens by name
         HashMap<String, VBox> tokenTables = new HashMap<>();
 
         for (Token token : tokens) {

@@ -5,8 +5,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class Lexer {
     private static Dictionary<String, ArrayList<String>> predefinedTokens = new Hashtable<>();
