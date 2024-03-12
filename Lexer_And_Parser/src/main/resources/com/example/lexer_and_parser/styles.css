@@ -1,0 +1,17 @@
+.table-view .table-row-cell {
+    -fx-border-width: 2px; -fx-padding: 2px;
+    -fx-border-radius: 5px; -fx-background-radius: 5px;
+}
+.table-view {
+    -fx-border-color: black; -fx-border-width: 0 1px 1px 1px;-fx-padding: 0 2px 2px 2px;
+    -fx-border-radius: 0 0 10 10; -fx-background-radius: 0 0 10 10;
+}
+.table-lable {
+    -fx-font-weight: bold;
+    -fx-font-family: 'Arial'; -fx-text-fill: #FFFBFE;-fx-font-size: 18px;
+}
+.sTable-Vbox{
+    -fx-background-color: #2B396C; -fx-border-radius: 10 10 10 10;
+    -fx-background-radius: 10 10 10 10;
+    -fx-border-color: #2B396C; -fx-border-width: 1px 1px 1px 1px;
+}

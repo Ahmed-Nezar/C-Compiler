@@ -59,6 +59,7 @@ public class Lexer {
 
     public void tokenize() {
         tk.clear();
+        Token.idCount = 1;
         ArrayList<String> id_struct = new ArrayList<>();
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
@@ -73,10 +74,10 @@ public class Lexer {
                 "\"|'|" +                                                // Match bad puncatuation
                 bad_Identifiers + "|" +     // Match bad variable names
                 num_regex + num_dataType_regex + "|" +           // Match numbers
-                "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Functions)
+                "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Function)
                 "\\}(?:\\s*\\w+)?\\s*;|" + // Match End Block of Struct
-                "^(struct|typedef( )struct)\\s+(\\w+)\\s*[\\{|;]|" + // Match identifiers (Structs)
-                "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b((?!\\()|(?!\\{))|" + // Match identifiers (Variables)
+                "^(struct|typedef( )struct)\\s+(\\w+)\\s*[\\{|;]|" + // Match identifiers (Struct)
+                "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b((?!\\()|(?!\\{))|" + // Match identifiers (Variable)
                 "\\(|\\)|\\{|\\}|;|,|" +    // Match parentheses, braces, semicolon, comma
                 "\\+\\+|--|==|!=|<=|>=|&&|" + // Match comparison and logical operators
                 "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
@@ -102,7 +103,7 @@ public class Lexer {
                         tk.add(new Token("Puncatuations", ";", lines.indexOf(line) + 1));
                         if (!filteredStr.isEmpty()){
                             id_struct.add(filteredStr);
-                            tk.add(new Token("Identifiers (Structs)", filteredStr, lines.indexOf(line) + 1));
+                            tk.add(new Token("Identifiers (Struct)", filteredStr, lines.indexOf(line) + 1));
                         }
                         continue;
                     }
@@ -136,7 +137,7 @@ public class Lexer {
                     } else {
                         if (id_struct.contains(token) && !structDataType){
                             id_struct.add(token);
-                            tk.add(new Token("Identifiers (Structs)", token, lines.indexOf(line) + 1));
+                            tk.add(new Token("Identifiers (Struct)", token, lines.indexOf(line) + 1));
                             structDataType = true;
                         }
                         // Check if the token is a function or a variable
@@ -146,7 +147,7 @@ public class Lexer {
                             if (isKeyword(token)) {
                                 tk.add(new Token("Keywords", token, lines.indexOf(line) + 1));
                             } else {
-                                tk.add(new Token("Identifiers (Functions)", token, lines.indexOf(line) + 1));
+                                tk.add(new Token("Identifiers (Function)", token, lines.indexOf(line) + 1));
                             }
                         } else if (isStruct(token)) {
                             isStruct = true;
@@ -166,7 +167,7 @@ public class Lexer {
                                 tk.add(new Token("Puncatuations", ";", lines.indexOf(line) + 1));
                             }
                             id_struct.add(token);
-                            tk.add(new Token("Identifiers (Structs)", token, lines.indexOf(line) + 1));
+                            tk.add(new Token("Identifiers (Struct)", token, lines.indexOf(line) + 1));
 
                         } else {
                             if (token.contains("}")) {
@@ -180,7 +181,7 @@ public class Lexer {
                             if (token.matches(bad_Identifiers)){
                                 tk.add(new Token("Bad Identifiers", token, lines.indexOf(line) + 1));
                             } else {
-                                tk.add(new Token("Identifiers (Variables)", token, lines.indexOf(line) + 1));
+                                tk.add(new Token("Identifiers (Variable)", token, lines.indexOf(line) + 1));
                             }
                         }
                     }

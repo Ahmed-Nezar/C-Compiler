@@ -14,6 +14,7 @@ public class CompilerApp extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(CompilerApp.class.getResource("CompilerApplication.fxml"));
         Image icon = new Image(getClass().getResourceAsStream("lexer_icon.png"));
         Scene scene = new Scene(fxmlLoader.load(), 1200, 600);
+        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.getIcons().add(icon);
         stage.setMinWidth(1200);
         stage.setMinHeight(600);

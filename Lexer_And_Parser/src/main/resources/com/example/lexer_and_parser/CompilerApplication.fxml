@@ -28,7 +28,8 @@
             </Menu>
             <Menu mnemonicParsing="false" text="Edit">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onClearButtonClick" style="-fx-cursor: hand;" text="Clear" />
+                  <MenuItem mnemonicParsing="false" onAction="#onClearViewWindowClick" style="-fx-cursor: hand;" text="Clear View Window" />
+                  <MenuItem mnemonicParsing="false" onAction="#onResetButtonClick" style="-fx-cursor: hand;" text="Reset All" />
                </items>
             </Menu>
          </menus>
@@ -65,7 +66,7 @@
                               <Font size="18.0" />
                            </font>
                         </Button>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Symbol Table" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="3">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onCreateSymbolTable" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Symbol Table" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="18.0" />
                            </font>
