@@ -72,6 +72,8 @@ long long int power(int a, int b) {
 //--------------------------------
 
 int main() {
+    int add = 0;
+    add += 1;
     enum {RED, GREEN, BLUE} color;
     // Declare variables
     int integerVariable = 42.3, z, h;
