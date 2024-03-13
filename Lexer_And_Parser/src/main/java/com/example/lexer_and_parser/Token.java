@@ -1,5 +1,7 @@
 package com.example.lexer_and_parser;
 
+import java.util.Objects;
+
 public class Token {
     String name;
     String attrVal;
@@ -47,5 +49,19 @@ public class Token {
 
     public String getIdentifierType() {
         return identifierType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Token token = (Token) o;
+        return Objects.equals(attrVal, token.attrVal) &&
+                Objects.equals(identifierType, token.identifierType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(identifier, identifierType);
     }
 }

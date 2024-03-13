@@ -42,6 +42,9 @@ public class CompilerController {
     private VBox mainContainer;
 
     @FXML
+    private VBox mainWindow;
+
+    @FXML
     protected void initialize() {
         // Add listener to the codeTextArea text property
         codeTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -50,7 +53,13 @@ public class CompilerController {
         codeTextArea.scrollTopProperty().addListener((observable, oldValue, newValue) -> {
             lineNumberPane.setScrollTop(newValue.doubleValue());
         });
-
+        // Add listener to update maximum width of mainContainer
+        mainWindow.widthProperty().addListener((observable, oldValue, newValue) -> {
+            // Calculate the new prefWidth based on the window width
+            double newPrefWidth = newValue.doubleValue() * 0.9; // Adjust this multiplier as needed
+            // Set the prefWidth of mainContainer
+            mainContainer.setPrefWidth(newPrefWidth-630);
+        });
     }
 
     @FXML
@@ -160,7 +169,12 @@ public class CompilerController {
 
         // Filter tokens to include only those whose name contains "Identifier"
         List<Token> identifierTokens = tokens.stream()
-                .filter(token -> !token.getIdentifier().isEmpty()).toList();
+                .filter(token -> !token.getIdentifier().isEmpty())
+                .collect(Collectors.collectingAndThen(
+                Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Token::getAttrVal)
+                .thenComparing(Token::getIdentifierType))),
+                ArrayList::new));
+        identifierTokens.sort(Comparator.comparing(Token::getEntryNum));
 
         // Create VBox to hold the symbol table
         VBox symbolTableContainer = new VBox();
