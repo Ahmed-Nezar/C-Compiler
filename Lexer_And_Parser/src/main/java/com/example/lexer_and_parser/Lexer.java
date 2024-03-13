@@ -87,6 +87,7 @@ public class Lexer {
         );
         boolean isStruct = false;
         boolean structDataType = false;
+        int lineNum = 1;
         for (String line : lines) {
             structDataType = false;
             // Skip lines starting with "#" and comments
@@ -99,94 +100,95 @@ public class Lexer {
                         isStruct = false;
                         String filteredStr = token.replaceAll("\\s", "").replaceAll(";", "")
                                 .replaceAll("}", "");
-                        tk.add(new Token("Puncatuations", "}", lines.indexOf(line) + 1));
-                        tk.add(new Token("Puncatuations", ";", lines.indexOf(line) + 1));
+                        tk.add(new Token("Puncatuations", "}", lineNum));
+                        tk.add(new Token("Puncatuations", ";", lineNum));
                         if (!filteredStr.isEmpty()){
                             id_struct.add(filteredStr);
-                            tk.add(new Token("Identifiers (Struct)", filteredStr, lines.indexOf(line) + 1));
+                            tk.add(new Token("Identifiers (Struct)", filteredStr, lineNum));
                         }
                         continue;
                     }
                     if (isPunctuation(token)) {
-                        tk.add(new Token("Puncatuations", token, lines.indexOf(line) + 1));
+                        tk.add(new Token("Puncatuations", token, lineNum));
                         // Disable Struct Data Type Flag
                         if (token.equals(";"))
                             structDataType = false;
                     } else if (isOperator(token)) {
-                        tk.add(new Token("Operators", token, lines.indexOf(line) + 1));
+                        tk.add(new Token("Operators", token, lineNum));
                     } else if (token.matches(binary_octal_hex_regex + "|" + num_regex + num_dataType_regex)) {
                         if (token.matches(num_regex + "(ul|UL|l|L)")) {
-                            tk.add(new Token("Long", token, lines.indexOf(line) + 1));
+                            tk.add(new Token("Long", token, lineNum));
                         } else if (token.matches(num_regex + "(ull|ULL|ll|LL)")) {
-                            tk.add(new Token("Long Long", token, lines.indexOf(line) + 1));
+                            tk.add(new Token("Long Long", token, lineNum));
                         } else if (token.matches(binary_octal_hex_regex) ||
                                 token.matches("(0|([1-9][0-9]*))")){
-                            tk.add(new Token("Integers", token, lines.indexOf(line) + 1));
+                            tk.add(new Token("Integers", token, lineNum));
                         } else{
-                            tk.add(new Token("Floats", token, lines.indexOf(line) + 1));
+                            tk.add(new Token("Floats", token, lineNum));
                         }
                     } else if (token.startsWith("'") && token.endsWith("'")) {
-                        tk.add(new Token("Characters", token, lines.indexOf(line) + 1));
+                        tk.add(new Token("Characters", token, lineNum));
                     } else if (token.startsWith("\"") && token.endsWith("\"")) {
-                        tk.add(new Token("Strings", token, lines.indexOf(line) + 1));
+                        tk.add(new Token("Strings", token, lineNum));
                     } else if (isKeyword(token)) {
                         if (token.equals("struct")) {
                             isStruct = true;
                         }
-                        tk.add(new Token("Keywords", token, lines.indexOf(line) + 1));
+                        tk.add(new Token("Keywords", token, lineNum));
                     } else {
                         if (id_struct.contains(token) && !structDataType){
                             id_struct.add(token);
-                            tk.add(new Token("Identifiers (Struct)", token, lines.indexOf(line) + 1));
+                            tk.add(new Token("Identifiers (Struct)", token, lineNum));
                             structDataType = true;
                         }
                         // Check if the token is a function or a variable
                         else if (isFunction(token)) {
                             token = token.replaceFirst("\\(", "");
-                            tk.add(new Token("Puncatuations", "(", lines.indexOf(line) + 1));
+                            tk.add(new Token("Puncatuations", "(", lineNum));
                             if (isKeyword(token)) {
-                                tk.add(new Token("Keywords", token, lines.indexOf(line) + 1));
+                                tk.add(new Token("Keywords", token, lineNum));
                             } else {
-                                tk.add(new Token("Identifiers (Function)", token, lines.indexOf(line) + 1));
+                                tk.add(new Token("Identifiers (Function)", token, lineNum));
                             }
                         } else if (isStruct(token)) {
                             isStruct = true;
                             token = token.replaceFirst("typedef", "");
-                            tk.add(new Token("Keywords", "typedef", lines.indexOf(line) + 1));
+                            tk.add(new Token("Keywords", "typedef", lineNum));
 
                             token = token.replaceFirst("struct", "");
-                            tk.add(new Token("Keywords", "struct", lines.indexOf(line) + 1));
+                            tk.add(new Token("Keywords", "struct", lineNum));
 
                             token = token.replaceAll("\\s", "");
                             while(!token.equals(token.replaceFirst("\\{", ""))){
                                 token = token.replaceFirst("\\{", "");
-                                tk.add(new Token("Puncatuations", "{", lines.indexOf(line) + 1));
+                                tk.add(new Token("Puncatuations", "{", lineNum));
                             }
                             while(!token.equals(token.replaceFirst(";", ""))){
                                 token = token.replaceFirst(";", "");
-                                tk.add(new Token("Puncatuations", ";", lines.indexOf(line) + 1));
+                                tk.add(new Token("Puncatuations", ";", lineNum));
                             }
                             id_struct.add(token);
-                            tk.add(new Token("Identifiers (Struct)", token, lines.indexOf(line) + 1));
+                            tk.add(new Token("Identifiers (Struct)", token, lineNum));
 
                         } else {
                             if (token.contains("}")) {
                                 token = token.replaceFirst("}", "");
-                                tk.add(new Token("Puncatuations", "}", lines.indexOf(line) + 1));
+                                tk.add(new Token("Puncatuations", "}", lineNum));
                             }
                             if (token.contains(";")) {
                                 token = token.replaceFirst(";", "");
-                                tk.add(new Token("Puncatuations", ";", lines.indexOf(line) + 1));
+                                tk.add(new Token("Puncatuations", ";", lineNum));
                             }
                             if (token.matches(bad_Identifiers)){
-                                tk.add(new Token("Bad Identifiers", token, lines.indexOf(line) + 1));
+                                tk.add(new Token("Bad Identifiers", token, lineNum));
                             } else {
-                                tk.add(new Token("Identifiers (Variable)", token, lines.indexOf(line) + 1));
+                                tk.add(new Token("Identifiers (Variable)", token, lineNum));
                             }
                         }
                     }
                 }
             }
+            lineNum++;
         }
     }
 
