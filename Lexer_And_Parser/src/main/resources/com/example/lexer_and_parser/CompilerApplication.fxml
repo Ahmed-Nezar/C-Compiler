@@ -78,7 +78,7 @@
                         </Button>
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Parse Tree" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
-                              <Font name="Calibri Bold" size="18.0" />
+                              <Font size="18.0" />
                            </font>
                         </Button>
                      </children>
