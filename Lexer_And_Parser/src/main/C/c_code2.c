@@ -13,6 +13,9 @@ printf("The \"value pointed to by\" ptr is: %d\n", *ptr);
 // Test bad code
 int x = "This is a string!;
 int y = 'This is other string;
+int badBinary = 0b2146;
+int badHexa = 0x21G46;
+int badOctal = 0281496;
 
 int main() {
     // String with escape sequences
@@ -57,5 +60,7 @@ int main() {
     // Example with identifiers that start with a digit
     int 1test = 1;
     char 24611OmarVar1646461 = 'x';
+    char 394OmarVa#$ = 'y';
+    char* #OmarVa#$ = 'z';
     return 0;
 }

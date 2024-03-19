@@ -64,14 +64,16 @@ public class Lexer {
         ArrayList<String> lines = reader.getClines();
         boolean inBlockComment = false;
         String num_regex = "\\d+(\\.\\d+)?((e|E)(['+']|-)?\\d+)?";
-        String binary_octal_hex_regex = "(((0b|0B)[0-1]++)|(0[0-7]+)|((0x|0X)[0-9a-fA-F]+))";
+        String binary_octal_hex_regex = "(((0b|0B)[0-1]+)|(0[0-7]+)|((0x|0X)[0-9a-fA-F]+))";
+        String bad_binary_octal_hex_regex = "(0b|0B)[0-9]+|0[0-9]+|(0x|0X)[0-9a-zA-Z]+";
         String num_dataType_regex = "(ULL|LL|L|UL|F|ull|ll|l|ul|f)?";
-        String bad_Identifiers = "\\d+[a-zA-Z_]+\\d*";
+        String bad_Identifiers = "\\d+[a-zA-Z_#$@]+\\d*|[a-zA-Z_#$@]+[#$@]+[a-zA-Z_#$@\\d]+";
         Pattern tokenPattern = Pattern.compile(
                 "\"(?:[^\"\\\\]|\\\\.)*\"|" +             // Match double-quoted strings
+                bad_binary_octal_hex_regex + "|" +  // Match binary, octal, decimal, and hexadecimal numbers
                 binary_octal_hex_regex + "|" +  // Match binary, octal, decimal, and hexadecimal numbers
                 "'.'|" +                    // Match single characters within single quotes
-                "\"|'|" +                                                // Match bad puncatuation
+                "\"|'|" +                   // Match bad puncatuation
                 bad_Identifiers + "|" +     // Match bad variable names
                 num_regex + num_dataType_regex + "|" +           // Match numbers
                 "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b(\\()|" + // Match identifiers (Function)
@@ -86,7 +88,7 @@ public class Lexer {
                 "\\:|\\+\\+|\\-\\-|\\." // Match other operators
         );
         boolean isStruct = false;
-        boolean structDataType = false;
+        boolean structDataType;
         int lineNum = 1;
         for (String line : lines) {
             structDataType = false;
@@ -115,12 +117,18 @@ public class Lexer {
                             structDataType = false;
                     } else if (isOperator(token)) {
                         tk.add(new Token("Operators", token, lineNum));
+                    } else if (token.matches("(0b|0B)[0-9]+") && !token.replaceAll("[2-9]+", "").equals(token)
+                            || token.matches("0[0-9]+") && !token.replaceAll("[8-9]+", "").equals(token)
+                            || token.matches("(0x|0X)[0-9a-zA-Z]+") && !token.replaceFirst("(0x|0X)", "")
+                            .replaceAll("[g-zG-Z]+", "").equals(token.replaceFirst("(0x|0X)", ""))) {
+                        tk.add(new Token("Bad Integers", token, lineNum));
                     } else if (token.matches(binary_octal_hex_regex + "|" + num_regex + num_dataType_regex)) {
                         if (token.matches(num_regex + "(ul|UL|l|L)")) {
                             tk.add(new Token("Long", token, lineNum));
                         } else if (token.matches(num_regex + "(ull|ULL|ll|LL)")) {
                             tk.add(new Token("Long Long", token, lineNum));
-                        } else if (token.matches(binary_octal_hex_regex) ||
+                        }
+                        else if (token.matches(binary_octal_hex_regex) ||
                                 token.matches("(0|([1-9][0-9]*))")){
                             tk.add(new Token("Integers", token, lineNum));
                         } else{

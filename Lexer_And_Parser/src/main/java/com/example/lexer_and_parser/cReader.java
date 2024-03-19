@@ -59,8 +59,8 @@ public class cReader {
                     cLines.set(i, cLines.get(i).replaceAll("/\\*(.)*", ""));
                 }
             }
-            if (line.matches("(.)*#(.)*")){
-                cLines.set(i, cLines.get(i).replaceAll("#(.)*", ""));
+            if (line.matches("(\\s)*#(define|undef|include|ifdef|ifndef|if|else|elif|endif|error|pragma|line|null)")){
+                cLines.set(i, cLines.get(i).replaceFirst("#(.)*", ""));
             }
         }
     }
