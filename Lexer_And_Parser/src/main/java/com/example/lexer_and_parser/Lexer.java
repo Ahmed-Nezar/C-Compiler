@@ -80,7 +80,7 @@ public class Lexer {
                 "\\}(?:\\s*\\w+)?\\s*;|" + // Match End Block of Struct
                 "^(struct|typedef( )struct)\\s+(\\w+)\\s*[\\{|;]|" + // Match identifiers (Struct)
                 "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b((?!\\()|(?!\\{))|" + // Match identifiers (Variable)
-                "\\(|\\)|\\{|\\}|;|,|" +    // Match parentheses, braces, semicolon, comma
+                "\\(|\\)|\\{|\\}|;|,|\\[|\\]|" +    // Match parentheses, braces, semicolon, comma
                 "\\+\\+|--|==|!=|<=|>=|&&|" + // Match comparison and logical operators
                 "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
                 "\\+|\\*|/|%|<|>|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\>\\>\\>\\=|" + // Match arithmetic and bitwise operators
@@ -189,7 +189,7 @@ public class Lexer {
                             }
                             if (token.matches(bad_Identifiers)){
                                 tk.add(new Token("Bad Identifiers", token, lineNum));
-                            } else {
+                            } else if (!token.isEmpty()) {
                                 tk.add(new Token("Identifiers (Variable)", token, lineNum));
                             }
                         }
