@@ -21,10 +21,10 @@ public class Lexer {
         cOperators.add("=");cOperators.add("==");cOperators.add("!=");cOperators.add(">");cOperators.add("<");
         cOperators.add(">=");cOperators.add("<=");cOperators.add("&&");cOperators.add("||");cOperators.add("!");
         cOperators.add("&");cOperators.add("|");cOperators.add("^");cOperators.add("~");cOperators.add("<<");
-        cOperators.add(">>");cOperators.add(">>>");cOperators.add("?:");cOperators.add("++");cOperators.add("--");
+        cOperators.add(">>");cOperators.add("?:");cOperators.add("++");cOperators.add("--");cOperators.add(":");
         cOperators.add("+=");cOperators.add("-=");cOperators.add("*=");cOperators.add("/=");cOperators.add("%=");
         cOperators.add("&=");cOperators.add("|=");cOperators.add("^=");cOperators.add("<<=");cOperators.add(">>=");
-        cOperators.add(">>>=");cOperators.add("->");cOperators.add(".");cOperators.add("?");cOperators.add(":");
+        cOperators.add("->");cOperators.add(".");cOperators.add("?");cOperators.add(":");
 
         // Add C-language punctuations to the ArrayList
         cPunctuation.add("(");cPunctuation.add(")");cPunctuation.add("{");cPunctuation.add("}");
@@ -83,8 +83,8 @@ public class Lexer {
                 "\\(|\\)|\\{|\\}|;|,|\\[|\\]|" +    // Match parentheses, braces, semicolon, comma
                 "\\+\\+|--|==|!=|<=|>=|&&|" + // Match comparison and logical operators
                 "\\-\\>|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\|\\||" + // Match compound assignment operators
-                "\\+|\\*|/|%|<|>|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\>\\>\\>\\=|" + // Match arithmetic and bitwise operators
-                "\\-|\\+|\\*|\\=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\>\\>\\>|\\?|" + // Match miscellaneous operators
+                "\\+|\\*|/|%|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\<\\<|\\>\\>|<|>|" + // Match arithmetic and bitwise operators
+                "\\-|\\+|\\*|\\=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\?|" + // Match miscellaneous operators
                 "\\:|\\+\\+|\\-\\-|\\." // Match other operators
         );
         boolean isStruct = false;
