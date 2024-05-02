@@ -1,0 +1,94 @@
+############################## Notice ##############################
+# Put each rule on a single line.
+# Use "→" or "->" to separate rule sides.
+# Use "|" to separate productions.
+# Use "epsilon" to indicate empty string.
+# First symbol will be start symbol.
+# Comments like this are ignored.
+####################################################################
+
+############################## Example #############################
+Expression → Term AS
+AS → + Term AS | - Term AS | epsilon
+Term → Factor MS
+MS → * Factor MS | / Factor MS | epsilon
+Factor → Integer | Identifier | ( Expression )
+
+# varDecl → typeSpec varDeclList ;
+# varDeclList → varDeclInit varDeclList'
+# varDeclList' → , varDeclInit varDeclList' | epsilon
+# typeSpec → int | bool | char | float
+
+####################################################################
+
+# program → declList
+# declList → decl declList'
+# declList' → declList | epsilon
+# decl → varDecl | funDecl
+#
+# ############################## Use Them #############################
+# varDecl → typeSpec varDeclList ;
+# ############################## End Use #############################
+#
+# scopedVarDecl → static typeSpec varDeclList ; | typeSpec varDeclList ;
+#
+# ############################## Use Them #############################
+# varDeclList → varDeclInit varDeclList'
+# varDeclList' → , varDeclInit varDeclList' | epsilon
+# ############################## End Use #############################
+#
+# varDeclInit → varDeclId | varDeclId : simpleExp
+# varDeclId → Identifier | Identifier [ NUMCONST ]
+#
+# ############################## Use Them #############################
+# typeSpec → int | bool | char | float
+# ############################## End Use #############################
+#
+# funDecl → typeSpec Identifier ( parms ) stmt | Identifier ( parms ) stmt
+# parms → parmList | epsilon
+# parmList → parmTypeList parmList'
+# parmList' → ; parmTypeList parmList' | epsilon
+# parmTypeList → typeSpec parmIdList
+# parmIdList → parmId parmIdList'
+# parmIdList' → , parmId parmIdList' | epsilon
+# parmId → Identifier | Identifier [ ]
+# stmt → expStmt | compoundStmt | selectStmt | iterStmt | returnStmt | breakStmt
+# expStmt → exp ; | ;
+# compoundStmt → { localDecls stmtList }
+# localDecls → scopedVarDecl localDecls'
+# localDecls' → scopedVarDecl localDecls' | epsilon
+# stmtList → stmt stmtList'
+# stmtList' → stmt stmtList' | epsilon
+# selectStmt → if simpleExp then stmt | if simpleExp then stmt else stmt
+# iterStmt → while simpleExp do stmt | for Identifier = iterRange do stmt
+# iterRange → simpleExp to simpleExp | simpleExp to simpleExp by simpleExp
+# returnStmt → return ; | return exp ;
+# breakStmt → break ;
+# exp → mutable = exp | mutable += exp | mutable −= exp | mutable ∗= exp | mutable /= exp | mutable ++ | mutable −− | simpleExp
+# simpleExp → andExp simpleExp'
+# simpleExp' → or andExp simpleExp' | epsilon
+# andExp → unaryRelExp andExp'
+# andExp' → and unaryRelExp andExp' | epsilon
+# unaryRelExp → not unaryRelExp | relExp
+# relExp → minmaxExp relop minmaxExp | minmaxExp
+# relop → <= | < | > | >= | == | !=
+# minmaxExp → sumExp minmaxExp'
+# minmaxExp' → minmaxop sumExp minmaxExp' | epsilon
+# minmaxop → :>: | :<:
+# sumExp → mulExp sumExp'
+# sumExp' → sumop mulExp sumExp' | epsilon
+# sumop → + | −
+# mulExp → unaryExp mulExp'
+# mulExp' → mulop unaryExp mulExp' | epsilon
+# mulop → ∗ | / | %
+# unaryExp → Factor unaryExp'
+# unaryExp' → unaryop Factor unaryExp' | epsilon
+# unaryop → − | ∗ | ?
+# Factor → immutable | mutable
+# mutable → Identifier | Identifier [ exp ]
+# immutable → ( exp ) | call | constant
+# call → Identifier ( args )
+# args → argList | epsilon
+# argList → exp argList'
+# argList' → , exp argList' | epsilon
+# constant → NUMCONST | CHARCONST | STRINGCONST | true | false

@@ -10,6 +10,7 @@ public class Lexer {
     private static Dictionary<String, ArrayList<String>> predefinedTokens = new Hashtable<>();
     public cReader reader;
     private ArrayList<Token> tk = new ArrayList<>();
+    public Boolean EOF = false;
     public Lexer(String path){
         reader = new cReader(path);
         ArrayList<String> cOperators = new ArrayList<>();
@@ -50,6 +51,7 @@ public class Lexer {
     public void changePath(String path){
         reader = new cReader(path);
         tk.clear();
+        EOF = false;
     }
 
     public void clear(){
@@ -200,6 +202,15 @@ public class Lexer {
         }
     }
 
+    public Token getNextToken() {
+        if (tk.isEmpty())
+            tokenize();
+        Token t = tk.get(0);
+        tk.remove(0);
+        EOF = tk.isEmpty();
+        return t;
+    }
+
 
     private boolean isFunction(String token) {
         return token.contains("(");
@@ -238,12 +249,17 @@ public class Lexer {
 
     public static void main(String[] args) {
         Lexer lexer1 = new Lexer("src/main/C/c_code.c");
-        lexer1.tokenize();
-        lexer1.displayTokens();
-        System.out.println("-------------------------------------------------");
+        while (!lexer1.EOF) {
+            Token t = lexer1.getNextToken();
+            t.displayToken();
+        }
+        System.out.println("----------------------------------------------------------------------");
         lexer1.changePath("src/main/C/c_code2.c");
-        lexer1.tokenize();
-        lexer1.displayTokens();
+        while (!lexer1.EOF) {
+            Token t = lexer1.getNextToken();
+            t.displayToken();
+        }
+        System.out.println("----------------------------------------------------------------------");
     }
 
 }
