@@ -108,7 +108,7 @@ public class Lexer {
                         tk.add(new Token("Puncatuations", ";", lineNum));
                         if (!filteredStr.isEmpty()){
                             id_struct.add(filteredStr);
-                            tk.add(new Token("Identifiers (Struct)", filteredStr, lineNum));
+                            tk.add(new Token("Identifiers_Struct", filteredStr, lineNum));
                         }
                         continue;
                     }
@@ -123,7 +123,7 @@ public class Lexer {
                             || token.matches("0[0-9]+") && !token.replaceAll("[8-9]+", "").equals(token)
                             || token.matches("(0x|0X)[0-9a-zA-Z]+") && !token.replaceFirst("(0x|0X)", "")
                             .replaceAll("[g-zG-Z]+", "").equals(token.replaceFirst("(0x|0X)", ""))) {
-                        tk.add(new Token("Bad Integers", token, lineNum));
+                        tk.add(new Token("Bad_Integers", token, lineNum));
                     } else if (token.matches(binary_octal_hex_regex + "|" + num_regex + num_dataType_regex)) {
                         if (token.matches(num_regex + "(ul|UL|l|L)")) {
                             tk.add(new Token("Long", token, lineNum));
@@ -148,7 +148,7 @@ public class Lexer {
                     } else {
                         if (id_struct.contains(token) && !structDataType){
                             id_struct.add(token);
-                            tk.add(new Token("Identifiers (Struct)", token, lineNum));
+                            tk.add(new Token("Identifiers_Struct", token, lineNum));
                             structDataType = true;
                         }
                         // Check if the token is a function or a variable
@@ -158,7 +158,7 @@ public class Lexer {
                             if (isKeyword(token)) {
                                 tk.add(new Token("Keywords", token, lineNum));
                             } else {
-                                tk.add(new Token("Identifiers (Function)", token, lineNum));
+                                tk.add(new Token("Identifiers_Function", token, lineNum));
                             }
                         } else if (isStruct(token)) {
                             isStruct = true;
@@ -178,7 +178,7 @@ public class Lexer {
                                 tk.add(new Token("Puncatuations", ";", lineNum));
                             }
                             id_struct.add(token);
-                            tk.add(new Token("Identifiers (Struct)", token, lineNum));
+                            tk.add(new Token("Identifiers_Struct", token, lineNum));
 
                         } else {
                             if (token.contains("}")) {
@@ -190,9 +190,9 @@ public class Lexer {
                                 tk.add(new Token("Puncatuations", ";", lineNum));
                             }
                             if (token.matches(bad_Identifiers)){
-                                tk.add(new Token("Bad Identifiers", token, lineNum));
+                                tk.add(new Token("Bad_Identifiers", token, lineNum));
                             } else if (!token.isEmpty()) {
-                                tk.add(new Token("Identifiers (Variable)", token, lineNum));
+                                tk.add(new Token("Identifiers_Variable", token, lineNum));
                             }
                         }
                     }
@@ -211,6 +211,9 @@ public class Lexer {
         return t;
     }
 
+    public ArrayList<Token> getTokens() {
+        return tk;
+    }
 
     private boolean isFunction(String token) {
         return token.contains("(");

@@ -1,5 +1,8 @@
 package com.example.lexer_and_parser.osamaaboudefParser;
 
+import com.example.lexer_and_parser.Lexer;
+import com.example.lexer_and_parser.Token;
+
 import java.io.File;
 import java.util.*;
 
@@ -18,17 +21,20 @@ public class AnalysisTable {
         grammar = new Grammar(grammarFile);
         source = PreProcessor.getStrippedSource(sourceFile);
         columnNames = new String[]{"Stack", "Tokens Queue", "Decision", "Observation"};
-        buildTable(new Lexer2().createTokens(source));
+        Lexer l = new Lexer(sourceFile.getPath()); // Orignial Remove
+        l.tokenize(); // Orignial Remove
+        buildTable(l.getTokens()); // Orignial new Lexer2().createTokens(source)
     }
 
-    private void buildTable(List<String> tokens) {
+    private void buildTable(ArrayList<Token> tokens) { // Orignial List<String>
         var predictiveTable = new PredictiveTable(grammar).getTable();
         table = new ArrayDeque<>();
         complete = false;
         String[] row;
 
         Queue<String> input = new ArrayDeque<>();
-        input.addAll(tokens);
+        input.addAll(tokens.stream().map(Token::getName).toList()); // Original tokens
+        System.out.println(tokens);
         input.add("$");
 
         Stack<String> stack = new Stack<>();

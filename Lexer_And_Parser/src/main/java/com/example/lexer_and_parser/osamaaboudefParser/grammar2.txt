@@ -1,0 +1,18 @@
+# Grammar Rules
+
+
+Program → StatementList
+StatementList → Statement Puncatuations StatementList | epsilon
+Statement → Keywords Identifiers_Variable | Keywords Identifiers_Variable Operators Integers
+# Statement → Expression | VarDecl
+# VarDecl → TypeSpec VarDeclList
+# VarDeclList → VarDeclInit VarDeclList'
+# VarDeclList' → , VarDeclInit VarDeclList' | epsilon
+# VarDeclInit → Identifiers_Variable | Identifiers_Variable = InitialValue
+# InitialValue → Expression
+# TypeSpec → int | bool | char | float
+# Expression → Term AS
+# AS → + Term AS | - Term AS | epsilon
+# Term → Factor MS
+# MS → * Factor MS | / Factor MS | epsilon
+# Factor → Integers | Identifiers_Variable | ( Expression )
