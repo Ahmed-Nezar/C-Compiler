@@ -1,18 +1,27 @@
 # Grammar Rules
-
-
-Program → StatementList
-StatementList → Statement Puncatuations StatementList | epsilon
-Statement → Keywords Identifiers_Variable | Keywords Identifiers_Variable Operators Integers
-# Statement → Expression | VarDecl
+########################################################################################################################
+# Program → StatementList
+# StatementList → Statement ; StatementList | epsilon
+# Statement → VarDecl
 # VarDecl → TypeSpec VarDeclList
 # VarDeclList → VarDeclInit VarDeclList'
 # VarDeclList' → , VarDeclInit VarDeclList' | epsilon
-# VarDeclInit → Identifiers_Variable | Identifiers_Variable = InitialValue
-# InitialValue → Expression
-# TypeSpec → int | bool | char | float
-# Expression → Term AS
-# AS → + Term AS | - Term AS | epsilon
-# Term → Factor MS
-# MS → * Factor MS | / Factor MS | epsilon
-# Factor → Integers | Identifiers_Variable | ( Expression )
+# VarDeclInit → Identifiers_Variable Manga
+# Manga →  = InitialValue | epsilon
+# InitialValue → Integers | Identifiers_Variable | ( Expression )
+# TypeSpec → int | bool | char | float | double | long Nezar | short
+# Nezar → long | epsilon
+#######################################################################################################################
+program → declList
+declList → decl declListTail
+declListTail → decl declListTail | epsilon
+decl → varDecl
+varDecl → optUnsigned varDeclList ;
+scopedVarDecl → static optUnsigned varDeclList ; | optUnsigned varDeclList ;
+varDeclList → varDeclInit varDeclList'
+varDeclList' → , varDeclInit varDeclList' | epsilon
+varDeclInit → varDeclId
+varDeclId → Identifiers_Variable | Identifiers_Variable [ NUMCONST ]
+optUnsigned → unsigned typeSpec | typeSpec
+typeSpec → int | bool | char | float | double | long optL | short
+optL → long | epsilon

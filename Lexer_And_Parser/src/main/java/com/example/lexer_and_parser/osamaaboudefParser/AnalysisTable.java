@@ -33,8 +33,16 @@ public class AnalysisTable {
         String[] row;
 
         Queue<String> input = new ArrayDeque<>();
-        input.addAll(tokens.stream().map(Token::getName).toList()); // Original tokens
-        System.out.println(tokens);
+//        input.addAll(tokens.stream().map(Token::getName).toList()); // Original tokens
+        for (Token token : tokens) {
+            if (token.getName().equals("Puncatuations") ||
+                    token.getName().equals("Keywords") ||
+                    token.getName().equals("Operators")) {
+                input.add(token.getAttrVal());
+            } else {
+                input.add(token.getName());
+            }
+        }
         input.add("$");
 
         Stack<String> stack = new Stack<>();
@@ -82,7 +90,9 @@ public class AnalysisTable {
                 }
             }
             else {
-                if (predictiveTable.get(front) == null) {
+                if (predictiveTable.get(front) == null ||
+                        front.equals("Bad_Identifiers") ||
+                        front.equals("Bad_Integers")) {
                     row[2] = "Lexical Error";
                     row[3] = "Illegal Token";
                     table.add(row);

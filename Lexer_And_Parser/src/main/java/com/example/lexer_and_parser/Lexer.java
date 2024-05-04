@@ -190,7 +190,7 @@ public class Lexer {
                                 tk.add(new Token("Puncatuations", ";", lineNum));
                             }
                             if (token.matches(bad_Identifiers)){
-                                tk.add(new Token("Bad_Identifiers", token, lineNum));
+                                tk.add(new Token("Bad_Identifiers", token, lineNum)); // lexical error
                             } else if (!token.isEmpty()) {
                                 tk.add(new Token("Identifiers_Variable", token, lineNum));
                             }

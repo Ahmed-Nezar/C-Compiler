@@ -6,71 +6,71 @@
 # First symbol will be start symbol.
 # Comments like this are ignored.
 ####################################################################
-
+# Start symbol: program
+# Non-terminals: program,decList,decList',decl,varDecl,scopedVarDecl,VarDeclList',
+#               varDeclInit,varDecId,
 ############################## Example #############################
-Expression → Term AS
-AS → + Term AS | - Term AS | epsilon
-Term → Factor MS
-MS → * Factor MS | / Factor MS | epsilon
-Factor → Integer | Identifier | ( Expression )
-
-# varDecl → typeSpec varDeclList ;
-# varDeclList → varDeclInit varDeclList'
-# varDeclList' → , varDeclInit varDeclList' | epsilon
-# typeSpec → int | bool | char | float
-
+# Expression → Term AS
+# AS → + Term AS | - Term AS | epsilon
+# Term → Factor MS
+# MS → * Factor MS | / Factor MS | epsilon
+# Factor → Integer | Identifier | ( Expression )
 ####################################################################
 
-# program → declList
-# declList → decl declList'
-# declList' → declList | epsilon
-# decl → varDecl | funDecl
-#
-# ############################## Use Them #############################
-# varDecl → typeSpec varDeclList ;
-# ############################## End Use #############################
-#
-# scopedVarDecl → static typeSpec varDeclList ; | typeSpec varDeclList ;
-#
-# ############################## Use Them #############################
-# varDeclList → varDeclInit varDeclList'
-# varDeclList' → , varDeclInit varDeclList' | epsilon
-# ############################## End Use #############################
-#
-# varDeclInit → varDeclId | varDeclId : simpleExp
-# varDeclId → Identifier | Identifier [ NUMCONST ]
-#
-# ############################## Use Them #############################
-# typeSpec → int | bool | char | float
-# ############################## End Use #############################
-#
-# funDecl → typeSpec Identifier ( parms ) stmt | Identifier ( parms ) stmt
-# parms → parmList | epsilon
-# parmList → parmTypeList parmList'
-# parmList' → ; parmTypeList parmList' | epsilon
-# parmTypeList → typeSpec parmIdList
-# parmIdList → parmId parmIdList'
-# parmIdList' → , parmId parmIdList' | epsilon
-# parmId → Identifier | Identifier [ ]
-# stmt → expStmt | compoundStmt | selectStmt | iterStmt | returnStmt | breakStmt
-# expStmt → exp ; | ;
-# compoundStmt → { localDecls stmtList }
-# localDecls → scopedVarDecl localDecls'
-# localDecls' → scopedVarDecl localDecls' | epsilon
-# stmtList → stmt stmtList'
-# stmtList' → stmt stmtList' | epsilon
-# selectStmt → if simpleExp then stmt | if simpleExp then stmt else stmt
-# iterStmt → while simpleExp do stmt | for Identifier = iterRange do stmt
-# iterRange → simpleExp to simpleExp | simpleExp to simpleExp by simpleExp
+program → declList
+declList → decl declListTail
+declListTail → decl declListTail | epsilon
+decl → varDecl | funDecl
+varDecl → optUnsigned varDeclList ;
+scopedVarDecl → static optUnsigned varDeclList ; | optUnsigned varDeclList ;
+varDeclList → varDeclInit varDeclList'
+varDeclList' → , varDeclInit varDeclList' | epsilon
+varDeclInit → varDeclId | varDeclId : simpleExp
+varDeclId → Identifiers_Variable | Identifiers_Variable [ NUMCONST ]
+optUnsigned → unsigned typeSpec | typeSpec
+typeSpec → int | bool | char | float | double | long optL | short
+optL → long | epsilon
+funDecl → typeSpec Identifiers_Function ( parms ) stmt | Identifiers_Function ( parms ) stmt
+parms → parmList | epsilon
+parmList → parmTypeList parmList'
+parmList' → ; parmTypeList parmList' | epsilon
+parmTypeList → typeSpec parmIdList
+parmIdList → parmId parmIdList'
+parmIdList' → , parmId parmIdList' | epsilon
+parmId → Identifiers_Variable | Identifiers_Variable [ ]
+expStmt → exp ; | ;
+compoundStmt → { localDecls stmtList }
+localDecls → localDeclsTail | epsilon
+localDeclsTail → scopedVarDecl localDeclsTail | epsilon
+stmt → expStmt | compoundStmt | returnStmt | breakStmt | switchStmt | epsilon
+stmtList → stmt stmtList'
+stmtList' → stmt stmtList' | epsilon
+exp → mutable expTail | simpleExp
+expTail → = exp | += exp | -= exp | *= exp | /= exp | ++ | --
+selection_statement → if ( exp ) stmt elsePart
+elsePart → else stmt | epsilon
+# iteration_statement → while ( exp ) stmt | do stmt while ( exp ) ; | for ( exp ; exp ; exp ) stmt | for ( exp ; exp ; ) stmt | for ( ; exp ; exp ) stmt
+# iteration_statement → for ( ; exp ; ) stmt | for ( ; ; exp ) stmt | for ( ; ; ) stmt
+# switchStmt → switch ( exp ) { caseList }
+# caseList → case caseLabel : stmt caseList | default : stmt caseList | epsilon
+
+
+# selection_statement → if ( exp ) stmt else stmt | if ( exp ) stmt | switch ( exp ) stmt
+# selection_statement → if ( exp ) stmt elsePart
+# elsePart → else stmt | epsilon
+# iteration_statement → while ( exp ) stmt | do { stmt } while ( exp ) ; | for ( expStmt expStmt ) stmt | for ( decl expStmt ) stmt
+
+# iterRange → simpleExp to simpleExp iterRangeTail
+# iterRangeTail → by simpleExp | epsilon
 # returnStmt → return ; | return exp ;
 # breakStmt → break ;
-# exp → mutable = exp | mutable += exp | mutable −= exp | mutable ∗= exp | mutable /= exp | mutable ++ | mutable −− | simpleExp
 # simpleExp → andExp simpleExp'
 # simpleExp' → or andExp simpleExp' | epsilon
 # andExp → unaryRelExp andExp'
 # andExp' → and unaryRelExp andExp' | epsilon
 # unaryRelExp → not unaryRelExp | relExp
-# relExp → minmaxExp relop minmaxExp | minmaxExp
+# relExp → minmaxExp relExpTail
+# relExpTail → relop minmaxExp | epsilon
 # relop → <= | < | > | >= | == | !=
 # minmaxExp → sumExp minmaxExp'
 # minmaxExp' → minmaxop sumExp minmaxExp' | epsilon
@@ -85,9 +85,11 @@ Factor → Integer | Identifier | ( Expression )
 # unaryExp' → unaryop Factor unaryExp' | epsilon
 # unaryop → − | ∗ | ?
 # Factor → immutable | mutable
-# mutable → Identifier | Identifier [ exp ]
+# # mutable → Identifiers_Variable | Identifiers_Variable [ exp ]
+# mutable → Identifiers_Variable mutableFactor
+# mutableFactor → epsilon | [ exp ]
 # immutable → ( exp ) | call | constant
-# call → Identifier ( args )
+# call → Identifiers_Variable ( args )
 # args → argList | epsilon
 # argList → exp argList'
 # argList' → , exp argList' | epsilon
