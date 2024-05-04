@@ -20,17 +20,23 @@
 program → declList
 declList → decl declListTail
 declListTail → decl declListTail | epsilon
-decl → varDecl | funDecl
-varDecl → optUnsigned varDeclList ;
-scopedVarDecl → static optUnsigned varDeclList ; | optUnsigned varDeclList ;
-varDeclList → varDeclInit varDeclList'
-varDeclList' → , varDeclInit varDeclList' | epsilon
-varDeclInit → varDeclId | varDeclId : simpleExp
-varDeclId → Identifiers_Variable | Identifiers_Variable [ NUMCONST ]
+decl → commonDecl declTail
+commonDecl → typeSpec Identifiers
+Identifiers  → Identifiers_Variable | Identifiers_Function
+declTail → funDeclTail | varDeclTail
+
+funDeclTail → ( parms ) stmt
+varDeclTail → varDeclListTail ;
+varDeclListTail → , Identifiers varDeclListTail | varDeclInit | epsilon
+
+varDeclInit → = optVarDeclInit
+optVarDeclInit → : simpleExp | InitialValue | epsilon
+InitialValue → Integers | Identifiers_Variable | ( exp )
+varDeclId → Identifiers_Variable optArray
+optArray → [ NUMCONST ] | epsilon
 optUnsigned → unsigned typeSpec | typeSpec
 typeSpec → int | bool | char | float | double | long optL | short
 optL → long | epsilon
-funDecl → typeSpec Identifiers_Function ( parms ) stmt | Identifiers_Function ( parms ) stmt
 parms → parmList | epsilon
 parmList → parmTypeList parmList'
 parmList' → ; parmTypeList parmList' | epsilon
@@ -43,54 +49,5 @@ compoundStmt → { localDecls stmtList }
 localDecls → localDeclsTail | epsilon
 localDeclsTail → scopedVarDecl localDeclsTail | epsilon
 stmt → expStmt | compoundStmt | returnStmt | breakStmt | switchStmt | epsilon
-stmtList → stmt stmtList'
-stmtList' → stmt stmtList' | epsilon
-exp → mutable expTail | simpleExp
-expTail → = exp | += exp | -= exp | *= exp | /= exp | ++ | --
-selection_statement → if ( exp ) stmt elsePart
-elsePart → else stmt | epsilon
-# iteration_statement → while ( exp ) stmt | do stmt while ( exp ) ; | for ( exp ; exp ; exp ) stmt | for ( exp ; exp ; ) stmt | for ( ; exp ; exp ) stmt
-# iteration_statement → for ( ; exp ; ) stmt | for ( ; ; exp ) stmt | for ( ; ; ) stmt
-# switchStmt → switch ( exp ) { caseList }
-# caseList → case caseLabel : stmt caseList | default : stmt caseList | epsilon
-
-
-# selection_statement → if ( exp ) stmt else stmt | if ( exp ) stmt | switch ( exp ) stmt
-# selection_statement → if ( exp ) stmt elsePart
-# elsePart → else stmt | epsilon
-# iteration_statement → while ( exp ) stmt | do { stmt } while ( exp ) ; | for ( expStmt expStmt ) stmt | for ( decl expStmt ) stmt
-
-# iterRange → simpleExp to simpleExp iterRangeTail
-# iterRangeTail → by simpleExp | epsilon
-# returnStmt → return ; | return exp ;
-# breakStmt → break ;
-# simpleExp → andExp simpleExp'
-# simpleExp' → or andExp simpleExp' | epsilon
-# andExp → unaryRelExp andExp'
-# andExp' → and unaryRelExp andExp' | epsilon
-# unaryRelExp → not unaryRelExp | relExp
-# relExp → minmaxExp relExpTail
-# relExpTail → relop minmaxExp | epsilon
-# relop → <= | < | > | >= | == | !=
-# minmaxExp → sumExp minmaxExp'
-# minmaxExp' → minmaxop sumExp minmaxExp' | epsilon
-# minmaxop → :>: | :<:
-# sumExp → mulExp sumExp'
-# sumExp' → sumop mulExp sumExp' | epsilon
-# sumop → + | −
-# mulExp → unaryExp mulExp'
-# mulExp' → mulop unaryExp mulExp' | epsilon
-# mulop → ∗ | / | %
-# unaryExp → Factor unaryExp'
-# unaryExp' → unaryop Factor unaryExp' | epsilon
-# unaryop → − | ∗ | ?
-# Factor → immutable | mutable
-# # mutable → Identifiers_Variable | Identifiers_Variable [ exp ]
-# mutable → Identifiers_Variable mutableFactor
-# mutableFactor → epsilon | [ exp ]
-# immutable → ( exp ) | call | constant
-# call → Identifiers_Variable ( args )
-# args → argList | epsilon
-# argList → exp argList'
-# argList' → , exp argList' | epsilon
-# constant → NUMCONST | CHARCONST | STRINGCONST | true | false
+stmtList → stmt stmtList' | epsilon
+stmtListTail → stmt stmtList' | epsilon

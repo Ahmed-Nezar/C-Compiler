@@ -21,7 +21,8 @@ scopedVarDecl → static optUnsigned varDeclList ; | optUnsigned varDeclList ;
 varDeclList → varDeclInit varDeclList'
 varDeclList' → , varDeclInit varDeclList' | epsilon
 varDeclInit → varDeclId
-varDeclId → Identifiers_Variable | Identifiers_Variable [ NUMCONST ]
+varDeclId → Identifiers_Variable optArray
+optArray → [ NUMCONST ] | epsilon
 optUnsigned → unsigned typeSpec | typeSpec
 typeSpec → int | bool | char | float | double | long optL | short
 optL → long | epsilon
