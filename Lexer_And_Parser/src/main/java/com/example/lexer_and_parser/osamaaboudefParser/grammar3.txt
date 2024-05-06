@@ -1,0 +1,110 @@
+translation-unit → external-declaration translation-unitFactor | statement-list
+translation-unitFactor → translation-unit' | epsilon
+translation-unit' → external-declaration translation-unit' | epsilon
+external-declaration → function-definition | init-declarator-list
+function-definition → declaration-specifiers_opt Identifiers_Function function-definition_opt compound-statement
+declaration-specifiers_opt → declaration-specifiers | epsilon
+function-definition_opt → declaration-list | epsilon
+declaration → ( declaration_opt ) ;
+declaration_opt → init-declarator-list | epsilon
+declaration-list → declaration declaration-list'
+declaration-list' → epsilon | declaration declaration-list'
+declaration-specifiers → storage-class-specifier declaration-specifiers | type-specifier declaration-specifiers | type-qualifier declaration-specifiers | epsilon
+storage-class-specifier → auto | register | static | extern | typedef
+type-specifier → void | char | short | int | long | float | double | signed | unsigned | struct-or-union-specifier | enum-specifier | typedef-name
+type-qualifier → const | volatile
+specifier-qualifier-list → specifier-qualifier-listFactor specifier-qualifier-list | epsilon
+specifier-qualifier-listFactor → type-specifier | type-qualifier
+type-name → specifier-qualifier-list type-name_opt
+type-name_opt → abstract-declarator | epsilon
+
+
+abstract-declarator → pointer | pointer_opt abstract-declaratorFactor
+pointer_opt → pointer | epsilon
+abstract-declaratorFactor → direct-abstract-declarator | epsilon
+direct-abstract-declarator → ( abstract-declarator ) direct-abstract-declarator' | direct-abstract-declarator''
+direct-abstract-declarator' → [ constant-expression ] direct-abstract-declarator' | ( parameter-type-list ) direct-abstract-declarator' | epsilon
+direct-abstract-declarator'' → [ constant-expression ] | ( parameter-type-list )
+typedef-name → identifier
+parameter-type-list → parameter-list parameter-type-listFactor
+parameter-type-listFactor → , ... | epsilon
+parameter-list → parameter-declaration parameter-list'
+parameter-list' → epsilon | , parameter-declaration parameter-list'
+parameter-declaration → declaration-specifiers parameter-declarationFactor
+parameter-declarationFactor → declarator | abstract-declarator
+init-declarator-list → type-specifier init-declarator init-declarator-list'
+init-declarator-list' → epsilon | , type-specifier_opt init-declarator init-declarator-list'
+type-specifier_opt → type-specifier | epsilon
+init-declarator → Identifiers_Variable init
+init → = initializer | epsilon
+struct-or-union-specifier → struct-or-union identifier_opt struct-or-union-specifier'
+identifier_opt → Identifiers_Struct | epsilon
+struct-or-union-specifier' → { struct-declaration-list } | epsilon
+struct-declaration-list → struct-declaration struct-declaration-list'
+struct-declaration-list' → epsilon | struct-declaration struct-declaration-list'
+struct-declarator → Identifiers_Struct struct-declarator'
+struct-declarator' → epsilon | : constant-expression
+enum-specifier → enum identifier enum-specifier'
+enum-specifier' → { enumerator-list } | epsilon
+enumerator-list → enumerator enumerator-list'
+enumerator-list' → epsilon | , enumerator enumerator-list'
+enumerator → identifier enumerator'
+enumerator' → = constant-expression | epsilon
+
+statement → labeled-statement statement | expression-statement | compound-statement | selection-statement statement elseBody statement | selection-switch statement | iteration-statement statement | doStatement statement doWhile_Body | jump-statement
+labeled-statement → identifier : | case constant-expression : | default :
+statement-list → statement statement-list'
+statement-list' → statement statement-list' | epsilon
+expression-statement → expression ; expression-statement_opt
+expression-statement_opt → expression | epsilon
+compound-statement → { declaration-list_opt statement-list_opt }
+declaration-list_opt → declaration-list | epsilon
+statement-list_opt → statement-list | epsilon
+selection-statement → if ( expression )
+selection-switch → switch ( expression )
+elseBody → else | epsilon
+iteration-statement → while ( expression ) | for ( expression_opt ; expression_opt ; expression_opt )
+doStatement → do
+doWhile_Body → while ( expression ) ;
+jump-statement → goto identifier ; | continue ; | break ; | return expression_opt ;
+expression_opt → expression | epsilon
+expression → assignment-expression expression' | external-declaration | postfix-expression
+expression' → , assignment-expression expression' | epsilon
+assignment-expression → conditional-expression | unary-expression assignment-operator assignment-expression
+assignment-operator → = | *= | /= | %= | += | -= | <<= | >>= | &= | ^= | |=
+conditional-expression → conditional-expressionFactor ? expression : conditional-expression
+conditional-expressionFactor → logical-OR-expression | epsilon
+logical-OR-expression → logical-AND-expression logical-OR-expression'
+logical-OR-expression' → || logical-AND-expression logical-OR-expression' | epsilon
+logical-AND-expression → inclusive-OR-expression logical-AND-expression'
+logical-AND-expression' → && inclusive-OR-expression logical-AND-expression' | epsilon
+inclusive-OR-expression → exclusive-OR-expression inclusive-OR-expression'
+inclusive-OR-expression' → \| exclusive-OR-expression inclusive-OR-expression' | epsilon
+exclusive-OR-expression → AND-expression exclusive-OR-expression'
+exclusive-OR-expression' → ^ AND-expression exclusive-OR-expression' | epsilon
+AND-expression → AND-expression'
+AND-expression' → & AND-expression' | epsilon
+shift-expression → additive-expression shift-expression'
+shift-expression' → << additive-expression shift-expression' | >> additive-expression shift-expression' | epsilon
+additive-expression → multiplicative-expression additive-expression'
+additive-expression' → + multiplicative-expression additive-expression' | - multiplicative-expression additive-expression' | epsilon
+multiplicative-expression → cast-expression multiplicative-expression'
+multiplicative-expression' → * cast-expression multiplicative-expression' | / cast-expression multiplicative-expression' | % cast-expression multiplicative-expression' | epsilon
+cast-expression → unary-expression cast-expression | ( type-name ) cast-expression
+unary-expression → postfix-expression | ++ unary-expression | -- unary-expression | unary-operator | sizeof unary-expression | sizeof ( type-name )
+unary-operator → & | * | + | - | ~ | !
+postfix-expression → primary-expression postfix-expression' comparator-RHS
+comparator-RHS → values | primary-expression
+postfix-expression' → [ expression ] postfix-expression' | ( postfix-expression'-opt ) postfix-expression' | . identifier postfix-expression' | -> identifier postfix-expression' | ++ postfix-expression' | -- postfix-expression' | comparison-expression | epsilon
+comparison-expression → < | > | <= | >= | == | !=
+postfix-expression'-opt → argument-expression-list | epsilon
+primary-expression → identifier | constant | string | ( expression )
+argument-expression-list → assignment-expression argument-expression-list'
+argument-expression-list' → , assignment-expression argument-expression-list' | epsilon
+initializer → values | assignment-expression | { initializer-list } | { initializer-list , }
+values → Integers | Floats | Characters | Strings
+initializer-list → initializer initializer-list'
+initializer-list' → , initializer initializer-list' | epsilon
+constant → integer-constant | character-constant | floating-constant | enumeration-constant
+identifier → Identifiers_Variable
+type-qualifier → const | volatile

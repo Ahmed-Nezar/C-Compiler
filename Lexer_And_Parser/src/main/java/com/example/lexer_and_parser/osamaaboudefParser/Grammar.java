@@ -34,8 +34,10 @@ public class Grammar {
         var nonTerminal = sides[0].strip();
         var rightSide = sides[1].strip();
         List<Production> productions = new ArrayList<>();
-        for (var productionText : rightSide.split("\\|"))
+        for (var productionText : rightSide.split(" \\| ")) {
+            productionText = productionText.replaceAll("\\\\\\|", "|");
             productions.add(new Production(productionText.strip().split(" ")));
+        }
         nonTerminals.add(nonTerminal);
         rules.put(nonTerminal, productions);
     }

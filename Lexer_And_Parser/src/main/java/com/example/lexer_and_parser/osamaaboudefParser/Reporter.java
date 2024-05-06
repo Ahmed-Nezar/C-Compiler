@@ -11,10 +11,10 @@ public class Reporter {
         System.out.println();
         System.out.println("  ┌─────────────────┐");
         System.out.println("┌─│ Parsing Summary │" + "─".repeat(136) + "┐");
-//        System.out.println("│ └─────────────────┘" + " ".repeat(136) + "│");
-//        System.out.println("│ " + expressionStatement() + " ".repeat(154 - expressionStatement().length()) + " │");
-//        System.out.println("│ " + fileStatement() + " ".repeat(154 - fileStatement().length()) + " │");
-//        System.out.println("└" + "─".repeat(156) + "┘");
+        System.out.println("│ └─────────────────┘" + " ".repeat(136) + "│");
+        System.out.println("│ " + expressionStatement() + " ".repeat(154 - expressionStatement().length()) + " │");
+        System.out.println("│ " + fileStatement() + " ".repeat(154 - fileStatement().length()) + " │");
+        System.out.println("└" + "─".repeat(156) + "┘");
     }
 
     public void printAnalysisTable() {

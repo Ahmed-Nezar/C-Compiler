@@ -7,8 +7,7 @@
 # Comments like this are ignored.
 ####################################################################
 # Start symbol: program
-# Non-terminals: program,decList,decList',decl,varDecl,scopedVarDecl,VarDeclList',
-#               varDeclInit,varDecId,
+# Non-terminals: program, decList, decList', decl, varDecl, scopedVarDecl, VarDeclList', varDeclInit, varDecId,
 ############################## Example #############################
 # Expression → Term AS
 # AS → + Term AS | - Term AS | epsilon
@@ -17,7 +16,7 @@
 # Factor → Integer | Identifier | ( Expression )
 ####################################################################
 
-program → declList
+program → declList | call
 declList → decl declListTail
 declListTail → decl declListTail | epsilon
 decl → commonDecl declTail
@@ -51,3 +50,55 @@ localDeclsTail → scopedVarDecl localDeclsTail | epsilon
 stmt → expStmt | compoundStmt | returnStmt | breakStmt | switchStmt | epsilon
 stmtList → stmt stmtList' | epsilon
 stmtListTail → stmt stmtList' | epsilon
+#########################
+# NEW ADDED GRAMMAR RULES
+#########################
+exp → mutable expTail | simpleExp
+expTail → = exp | += exp | -= exp | *= exp | /= exp | ++ | --
+selection_statement → if ( exp ) stmt elsePart
+elsePart → else stmt | epsilon
+# iteration_statement → while ( exp ) stmt | do stmt while ( exp ) ; | for ( exp ; exp ; exp ) stmt | for ( exp ; exp ; ) stmt | for ( ; exp ; exp ) stmt
+# iteration_statement → for ( ; exp ; ) stmt | for ( ; ; exp ) stmt | for ( ; ; ) stmt
+# switchStmt → switch ( exp ) { caseList }
+# caseList → case caseLabel : stmt caseList | default : stmt caseList | epsilon
+
+
+# selection_statement → if ( exp ) stmt else stmt | if ( exp ) stmt | switch ( exp ) stmt
+# selection_statement → if ( exp ) stmt elsePart
+# elsePart → else stmt | epsilon
+# iteration_statement → while ( exp ) stmt | do { stmt } while ( exp ) ; | for ( expStmt expStmt ) stmt | for ( decl expStmt ) stmt
+
+# iterRange → simpleExp to simpleExp iterRangeTail
+# iterRangeTail → by simpleExp | epsilon
+# returnStmt → return ; | return exp ;
+# breakStmt → break ;
+# simpleExp → andExp simpleExp'
+# simpleExp' → or andExp simpleExp' | epsilon
+# andExp → unaryRelExp andExp'
+# andExp' → and unaryRelExp andExp' | epsilon
+# unaryRelExp → not unaryRelExp | relExp
+# relExp → minmaxExp relExpTail
+# relExpTail → relop minmaxExp | epsilon
+# relop → <= | < | > | >= | == | !=
+# minmaxExp → sumExp minmaxExp'
+# minmaxExp' → minmaxop sumExp minmaxExp' | epsilon
+# minmaxop → :>: | :<:
+# sumExp → mulExp sumExp'
+# sumExp' → sumop mulExp sumExp' | epsilon
+# sumop → + | −
+# mulExp → unaryExp mulExp'
+# mulExp' → mulop unaryExp mulExp' | epsilon
+# mulop → ∗ | / | %
+# unaryExp → Factor unaryExp'
+# unaryExp' → unaryop Factor unaryExp' | epsilon
+# unaryop → − | ∗ | ?
+# Factor → immutable | mutable
+# mutable → Identifiers_Variable | Identifiers_Variable [ exp ]
+# mutable → Identifiers_Variable mutableFactor
+# mutableFactor → epsilon | [ exp ]
+# immutable → ( exp ) | call | constant
+call → Identifiers_Function ( args )
+args → argList | epsilon
+argList → exp argList'
+argList' → , exp argList' | epsilon
+# constant → NUMCONST | CHARCONST | STRINGCONST | true | false
