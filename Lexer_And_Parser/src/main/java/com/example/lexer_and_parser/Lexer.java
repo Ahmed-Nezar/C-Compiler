@@ -154,12 +154,12 @@ public class Lexer {
                         // Check if the token is a function or a variable
                         else if (isFunction(token)) {
                             token = token.replaceFirst("\\(", "");
-                            tk.add(new Token("Puncatuations", "(", lineNum));
                             if (isKeyword(token)) {
                                 tk.add(new Token("Keywords", token, lineNum));
                             } else {
                                 tk.add(new Token("Identifiers_Function", token, lineNum));
                             }
+                            tk.add(new Token("Puncatuations", "(", lineNum));
                         } else if (isStruct(token)) {
                             isStruct = true;
                             token = token.replaceFirst("typedef", "");

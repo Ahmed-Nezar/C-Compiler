@@ -8,13 +8,16 @@ public class Reporter {
     }
 
     public void printParsingSummary() {
+        String expStr = expressionStatement();
+        String rightStr = expStr.contains("REJECTED")? "│" : " ".repeat(Math.abs(154- expStr.length())) + " │";
+        int countChars = Math.abs(-20 + (expStr.length() + rightStr.length()));
         System.out.println();
         System.out.println("  ┌─────────────────┐");
-        System.out.println("┌─│ Parsing Summary │" + "─".repeat(136) + "┐");
-        System.out.println("│ └─────────────────┘" + " ".repeat(136) + "│");
-        System.out.println("│ " + expressionStatement() + " ".repeat(154 - expressionStatement().length()) + " │");
-        System.out.println("│ " + fileStatement() + " ".repeat(154 - fileStatement().length()) + " │");
-        System.out.println("└" + "─".repeat(156) + "┘");
+        System.out.println("┌─│ Parsing Summary │" + "─".repeat(countChars) + "┐");
+        System.out.println("│ └─────────────────┘" + " ".repeat(countChars) + "│");
+        System.out.println("│ " + expressionStatement() + rightStr);
+        System.out.println("│ " + fileStatement() + " ".repeat(Math.abs(206 - fileStatement().length())) + " │");
+        System.out.println("└" + "─".repeat(208) + "┘");
     }
 
     public void printAnalysisTable() {

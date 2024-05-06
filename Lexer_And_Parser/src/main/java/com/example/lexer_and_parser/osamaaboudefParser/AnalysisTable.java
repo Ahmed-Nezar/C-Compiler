@@ -33,7 +33,6 @@ public class AnalysisTable {
         String[] row;
 
         Queue<String> input = new ArrayDeque<>();
-//        input.addAll(tokens.stream().map(Token::getName).toList()); // Original tokens
         for (Token token : tokens) {
             if (token.getName().equals("Puncatuations") ||
                     token.getName().equals("Keywords") ||
