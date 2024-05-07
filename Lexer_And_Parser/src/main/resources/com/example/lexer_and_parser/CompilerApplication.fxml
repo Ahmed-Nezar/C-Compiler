@@ -71,7 +71,7 @@
                               <Font size="18.0" />
                            </font>
                         </Button>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Parse" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="4">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onAnalysisTableButtonClick" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Parse" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -105,7 +105,7 @@
 
             <AnchorPane minWidth="432.0">
                <children>
-                  <ScrollPane layoutX="20.0" layoutY="30.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="572.8" prefWidth="223.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ScrollPane fx:id="outputScrollPane" layoutX="20.0" layoutY="30.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="572.8" prefWidth="223.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
                         <AnchorPane>
                            <children>

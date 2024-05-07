@@ -1,17 +1,18 @@
 package com.example.lexer_and_parser;
 
+import com.example.lexer_and_parser.osamaaboudefParser.AnalysisTable;
+import com.example.lexer_and_parser.osamaaboudefParser.Reporter;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 
@@ -44,6 +45,11 @@ public class CompilerController {
     @FXML
     private VBox mainWindow;
 
+    private AnalysisTable analysisTable;
+
+    @FXML
+    private ScrollPane outputScrollPane;
+
     @FXML
     protected void initialize() {
         // Add listener to the codeTextArea text property
@@ -64,6 +70,12 @@ public class CompilerController {
 
     @FXML
     protected void onTokenizeButtonClick(){
+        // Reset horizontal scrollbar policy to default
+        this.outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        // Reset content resizing to default
+        this.outputScrollPane.setFitToWidth(false);
+        this.outputScrollPane.setFitToHeight(false);
         if (codeTextArea.getText().isEmpty()) {
             return;
         }
@@ -160,6 +172,12 @@ public class CompilerController {
 
     @FXML
     protected void onCreateSymbolTable() {
+        // Reset horizontal scrollbar policy to default
+        this.outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        // Reset content resizing to default
+        this.outputScrollPane.setFitToWidth(false);
+        this.outputScrollPane.setFitToHeight(false);
         if (codeTextArea.getText().isEmpty()) {
             return;
         }
@@ -282,15 +300,92 @@ public class CompilerController {
     }
 
     @FXML
+    protected void onAnalysisTableButtonClick() {
+
+        mainContainer.getChildren().clear();
+        if(analysisTable == null){
+            return;
+        }
+
+        HBox statusBox = new HBox();
+        statusBox.setAlignment(Pos.CENTER_LEFT);
+        statusBox.setPadding(new Insets(10));
+        String expressionStatus = analysisTable.isComplete() ? "ACCEPTED." :
+                "REJECTED! (" + analysisTable.getTable().getLast()[2] +
+                        ": " + analysisTable.getTable().getLast()[3] + ")";
+        Label statusLabel = new Label(expressionStatus);
+        statusLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 30px;");
+        statusBox.getChildren().add(statusLabel);
+
+        // Create GridPane to hold the entire table
+        GridPane tableGridPane = new GridPane();
+        tableGridPane.setAlignment(Pos.CENTER);
+
+        // Create header row
+        String[] columnNames = analysisTable.getColumnNames();
+        for (int col = 0; col < columnNames.length; col++) {
+            Label headerLabel = new Label(columnNames[col]);
+            headerLabel.setStyle("-fx-background-color: #2B396C; -fx-text-fill: white;");
+            headerLabel.setPadding(new Insets(5, 20, 5, 20));
+            headerLabel.setMaxWidth(Double.MAX_VALUE);
+            GridPane.setHgrow(headerLabel, Priority.ALWAYS);
+            GridPane.setHalignment(headerLabel, HPos.CENTER);
+            tableGridPane.add(headerLabel, col, 0);
+        }
+
+        // Create data rows
+        Deque<String[]> tableData = analysisTable.getTable();
+        int row = 1;
+        for (String[] rowData : tableData) {
+            for (int col = 0; col < rowData.length; col++) {
+                Label dataLabel = new Label(rowData[col]);
+                dataLabel.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0;");
+                dataLabel.setPadding(new Insets(5, 20, 5, 20));
+                dataLabel.setMaxWidth(Double.MAX_VALUE);
+                GridPane.setHgrow(dataLabel, Priority.ALWAYS);
+                if (col == 0) {
+                    dataLabel.setAlignment(Pos.CENTER_RIGHT); // Align labels in the first column to the right
+                } else {
+                    dataLabel.setAlignment(Pos.CENTER_LEFT);
+                }
+                tableGridPane.add(dataLabel, col, row);
+            }
+            row++;
+        }
+
+
+
+
+        // Set horizontal scrollbar policy to ALWAYS for the ScrollPane
+        this.outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+        // Set minimum width and height for tableContainer
+        tableGridPane.setMinWidth(Region.USE_PREF_SIZE);
+        tableGridPane.setMinHeight(Region.USE_PREF_SIZE);
+
+        // Allow resizing of the content within the ScrollPane
+        this.outputScrollPane.setFitToWidth(true);
+        this.outputScrollPane.setFitToHeight(true);
+
+        // Add table container to mainContainer
+        mainContainer.getChildren().addAll(statusBox, tableGridPane);
+    }
+
+    @FXML
     protected void onUploadButtonClick() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select .c File");
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("C files (*.c)", "*.c");
-        fileChooser.getExtensionFilters().add(extFilter);
+        FileChooser.ExtensionFilter cFilter = new FileChooser.ExtensionFilter("C files (*.c)", "*.c");
+        FileChooser.ExtensionFilter txtFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().addAll(cFilter, txtFilter);
         fileChooser.setInitialDirectory(new File("src/main/C"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             lexer = new Lexer(file.getAbsolutePath());
+            var grammarFile = new File("src/main/java/com/example/lexer_and_parser/osamaaboudefParser/grammar3.txt");
+
+            this.analysisTable = new AnalysisTable(grammarFile, file);
+            var reporter = new Reporter(this.analysisTable);
             try {
                 String content = loadFileContent(file);
                 codeTextArea.setText(content);
