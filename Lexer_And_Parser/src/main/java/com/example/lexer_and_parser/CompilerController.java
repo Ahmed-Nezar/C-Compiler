@@ -382,7 +382,7 @@ public class CompilerController {
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             lexer = new Lexer(file.getAbsolutePath());
-            var grammarFile = new File("src/main/java/com/example/lexer_and_parser/osamaaboudefParser/grammar3.txt");
+            var grammarFile = new File("src/main/java/com/example/lexer_and_parser/osamaaboudefParser/grammar.txt");
 
             this.analysisTable = new AnalysisTable(grammarFile, file);
             var reporter = new Reporter(this.analysisTable);

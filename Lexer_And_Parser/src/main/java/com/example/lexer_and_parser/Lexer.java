@@ -105,11 +105,11 @@ public class Lexer {
                         String filteredStr = token.replaceAll("\\s", "").replaceAll(";", "")
                                 .replaceAll("}", "");
                         tk.add(new Token("Puncatuations", "}", lineNum));
-                        tk.add(new Token("Puncatuations", ";", lineNum));
                         if (!filteredStr.isEmpty()){
                             id_struct.add(filteredStr);
                             tk.add(new Token("Identifiers_Struct", filteredStr, lineNum));
                         }
+                        tk.add(new Token("Puncatuations", ";", lineNum));
                         continue;
                     }
                     if (isPunctuation(token)) {
@@ -162,23 +162,36 @@ public class Lexer {
                             tk.add(new Token("Puncatuations", "(", lineNum));
                         } else if (isStruct(token)) {
                             isStruct = true;
-                            token = token.replaceFirst("typedef", "");
-                            tk.add(new Token("Keywords", "typedef", lineNum));
+
+                            if (token.contains("typedef")) {
+                                token = token.replaceFirst("typedef", "");
+                                tk.add(new Token("Keywords", "typedef", lineNum));
+                            }
 
                             token = token.replaceFirst("struct", "");
                             tk.add(new Token("Keywords", "struct", lineNum));
 
                             token = token.replaceAll("\\s", "");
+                            int openCurlyCounter = 0, semiColonCounter = 0;
                             while(!token.equals(token.replaceFirst("\\{", ""))){
                                 token = token.replaceFirst("\\{", "");
-                                tk.add(new Token("Puncatuations", "{", lineNum));
+                                openCurlyCounter++;
                             }
                             while(!token.equals(token.replaceFirst(";", ""))){
                                 token = token.replaceFirst(";", "");
-                                tk.add(new Token("Puncatuations", ";", lineNum));
+                                semiColonCounter++;
                             }
                             id_struct.add(token);
                             tk.add(new Token("Identifiers_Struct", token, lineNum));
+                            while (openCurlyCounter > 0){
+                                tk.add(new Token("Puncatuations", "{", lineNum));
+                                openCurlyCounter--;
+                            }
+
+                            while (semiColonCounter > 0){
+                                tk.add(new Token("Puncatuations", ";", lineNum));
+                                semiColonCounter--;
+                            }
 
                         } else {
                             if (token.contains("}")) {

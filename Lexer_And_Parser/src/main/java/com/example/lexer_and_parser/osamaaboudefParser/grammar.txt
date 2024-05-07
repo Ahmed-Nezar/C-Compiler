@@ -1,104 +1,120 @@
-############################## Notice ##############################
-# Put each rule on a single line.
-# Use "→" or "->" to separate rule sides.
-# Use "|" to separate productions.
-# Use "epsilon" to indicate empty string.
-# First symbol will be start symbol.
-# Comments like this are ignored.
-####################################################################
-# Start symbol: program
-# Non-terminals: program, decList, decList', decl, varDecl, scopedVarDecl, VarDeclList', varDeclInit, varDecId,
-############################## Example #############################
-# Expression → Term AS
-# AS → + Term AS | - Term AS | epsilon
-# Term → Factor MS
-# MS → * Factor MS | / Factor MS | epsilon
-# Factor → Integer | Identifier | ( Expression )
-####################################################################
+translation-unit → statement-list
+translation-unitFactor → translation-unit' | epsilon
+translation-unit' → external-declaration translation-unit' | epsilon
+external-declaration → external-declarationFactor
+external-declarationFactor → init-declarator-list
+constant_opt → const | epsilon
+function-definition → Identifiers_Function ( parameter-list ) compound-statement
+parameter-list → type-specifier Identifiers_Variable assignment-expression_opt parameter-list' | epsilon
+assignment-expression_opt → assignment-expression | epsilon
+parameter-list' → , parameter-listFact | epsilon
+parameter-listFact → type-specifier Identifiers_Variable | . . .
+function-call → Identifiers_Function ( argument-expression-list )
+declaration-specifiers_opt → declaration-specifiers | epsilon
+declaration → ( declaration_opt ) ;
+declaration_opt → init-declarator-list | epsilon
+declaration-list → declaration declaration-list'
+declaration-list' → epsilon | declaration declaration-list'
+declaration-specifiers → storage-class-specifier declaration-specifiers | type-specifier declaration-specifiers | type-qualifier declaration-specifiers | epsilon
+storage-class-specifier → auto | register | static | extern | typedef
+type-specifier → void | char pointerLoop | short pointerLoop | int pointerLoop | long long_opt pointerLoop | float pointerLoop | double pointerLoop | signed | unsigned | struct-or-union-specifier | enum-specifier
+long_opt → long | epsilon
+specifier-qualifier-list → specifier-qualifier-listFactor specifier-qualifier-list | epsilon
+specifier-qualifier-listFactor → type-specifier | type-qualifier
+type-name → specifier-qualifier-list type-name_opt
+type-name_opt → abstract-declarator | epsilon
 
-program → declList | call
-declList → decl declListTail
-declListTail → decl declListTail | epsilon
-decl → commonDecl declTail
-commonDecl → typeSpec Identifiers
-Identifiers  → Identifiers_Variable | Identifiers_Function
-declTail → funDeclTail | varDeclTail
+abstract-declarator → pointer | pointer_opt abstract-declaratorFactor
+pointerLoop → epsilon | * pointerLoop
+pointer_opt → * | epsilon
+abstract-declaratorFactor → direct-abstract-declarator | epsilon
+direct-abstract-declarator → ( abstract-declarator ) direct-abstract-declarator' | direct-abstract-declarator''
+direct-abstract-declarator' → [ declaratorConst ] direct-abstract-declarator' | ( init-declarator-list ) direct-abstract-declarator' | epsilon
+direct-abstract-declarator'' → [ declaratorConst ] | ( init-declarator-list )
+declaratorConst → values | identifier
+init-declarator-list → init-declarator init-declarator-list'
+init-declarator-list' → epsilon | , type-specifier_opt init-declarator init-declarator-list'
+type-specifier_opt → type-specifier | epsilon
+init-declarator → Identifiers_Variable init
+init → [ Integers ] init | = initializer | epsilon
 
-funDeclTail → ( parms ) stmt
-varDeclTail → varDeclListTail ;
-varDeclListTail → , Identifiers varDeclListTail | varDeclInit | epsilon
+struct-or-union-specifier → struct-or-union identifierStruct_opt { struct-declaration-list } ;
+identifierStruct_opt → Identifiers_Struct | epsilon
+struct-or-union → struct | union
+struct-declaration-list → struct-declaration struct-declaration-list' | epsilon
+struct-declaration-list' → struct-declaration struct-declaration-list' | epsilon
+struct-declaration → specifier-qualifier-list struct-declarator-list ;
+struct-declarator-list → struct-declarator struct-declarator-list' | epsilon
+struct-declarator-list' → , struct-declarator struct-declarator-list' | epsilon
+struct-declarator → Identifiers_Variable struct-declarator-detail
+struct-declarator-detail → : structConst | epsilon
+structConst → values | identifier
 
-varDeclInit → = optVarDeclInit
-optVarDeclInit → : simpleExp | InitialValue | epsilon
-InitialValue → Integers | Identifiers_Variable | ( exp )
-varDeclId → Identifiers_Variable optArray
-optArray → [ NUMCONST ] | epsilon
-optUnsigned → unsigned typeSpec | typeSpec
-typeSpec → int | bool | char | float | double | long optL | short
-optL → long | epsilon
-parms → parmList | epsilon
-parmList → parmTypeList parmList'
-parmList' → ; parmTypeList parmList' | epsilon
-parmTypeList → typeSpec parmIdList
-parmIdList → parmId parmIdList'
-parmIdList' → , parmId parmIdList' | epsilon
-parmId → Identifiers_Variable | Identifiers_Variable [ ]
-expStmt → exp ; | ;
-compoundStmt → { localDecls stmtList }
-localDecls → localDeclsTail | epsilon
-localDeclsTail → scopedVarDecl localDeclsTail | epsilon
-stmt → expStmt | compoundStmt | returnStmt | breakStmt | switchStmt | epsilon
-stmtList → stmt stmtList' | epsilon
-stmtListTail → stmt stmtList' | epsilon
-#########################
-# NEW ADDED GRAMMAR RULES
-#########################
-exp → mutable expTail | simpleExp
-expTail → = exp | += exp | -= exp | *= exp | /= exp | ++ | --
-selection_statement → if ( exp ) stmt elsePart
-elsePart → else stmt | epsilon
-# iteration_statement → while ( exp ) stmt | do stmt while ( exp ) ; | for ( exp ; exp ; exp ) stmt | for ( exp ; exp ; ) stmt | for ( ; exp ; exp ) stmt
-# iteration_statement → for ( ; exp ; ) stmt | for ( ; ; exp ) stmt | for ( ; ; ) stmt
-# switchStmt → switch ( exp ) { caseList }
-# caseList → case caseLabel : stmt caseList | default : stmt caseList | epsilon
+enum-specifier → typdef_opt enum enum-specifierFactor
+typdef_opt → typedef | epsilon
+enum-specifierFactor → identifier enum-body_opt ; | { enumerator-list } ; identifier_opt
+identifier_opt → epsilon | identifier
+enum-body_opt → { enumerator-list } | epsilon
+enumerator-list → enumerator enumerator-list' | epsilon
+enumerator-list' → , enumerator enumerator-list' | epsilon
+enumerator → identifier enumerator'
+enumerator' → epsilon | = constExpr
+constExpr → values | identifier
 
-
-# selection_statement → if ( exp ) stmt else stmt | if ( exp ) stmt | switch ( exp ) stmt
-# selection_statement → if ( exp ) stmt elsePart
-# elsePart → else stmt | epsilon
-# iteration_statement → while ( exp ) stmt | do { stmt } while ( exp ) ; | for ( expStmt expStmt ) stmt | for ( decl expStmt ) stmt
-
-# iterRange → simpleExp to simpleExp iterRangeTail
-# iterRangeTail → by simpleExp | epsilon
-# returnStmt → return ; | return exp ;
-# breakStmt → break ;
-# simpleExp → andExp simpleExp'
-# simpleExp' → or andExp simpleExp' | epsilon
-# andExp → unaryRelExp andExp'
-# andExp' → and unaryRelExp andExp' | epsilon
-# unaryRelExp → not unaryRelExp | relExp
-# relExp → minmaxExp relExpTail
-# relExpTail → relop minmaxExp | epsilon
-# relop → <= | < | > | >= | == | !=
-# minmaxExp → sumExp minmaxExp'
-# minmaxExp' → minmaxop sumExp minmaxExp' | epsilon
-# minmaxop → :>: | :<:
-# sumExp → mulExp sumExp'
-# sumExp' → sumop mulExp sumExp' | epsilon
-# sumop → + | −
-# mulExp → unaryExp mulExp'
-# mulExp' → mulop unaryExp mulExp' | epsilon
-# mulop → ∗ | / | %
-# unaryExp → Factor unaryExp'
-# unaryExp' → unaryop Factor unaryExp' | epsilon
-# unaryop → − | ∗ | ?
-# Factor → immutable | mutable
-# mutable → Identifiers_Variable | Identifiers_Variable [ exp ]
-# mutable → Identifiers_Variable mutableFactor
-# mutableFactor → epsilon | [ exp ]
-# immutable → ( exp ) | call | constant
-call → Identifiers_Function ( args )
-args → argList | epsilon
-argList → exp argList'
-argList' → , exp argList' | epsilon
-# constant → NUMCONST | CHARCONST | STRINGCONST | true | false
+statement → labeled-statement | expression-statement | compound-statement | selection-statement | selection-switch | iteration-statement | do statement doWhile_Body | jump-statement
+labeled-statement → identifier : | case caseBody : | default :
+caseBody → values | identifier
+statement-list → statement statement-list'
+statement-list' → statement statement-list' | epsilon
+expression-statement → expression ; | constant_opt type-specifier functionOrVarDef | enum-specifier | struct-or-union-specifier
+functionOrVarDef → external-declaration ; | function-definition
+expression-statement_opt → expression-statement | epsilon
+semiOpt → ; | epsilon
+compound-statement → { declaration-list_opt statement-list_opt }
+declaration-list_opt → declaration-list | epsilon
+statement-list_opt → statement-list | epsilon
+selection-statement → if ( expression ) compound-statement elseBody
+elseBody → else | epsilon
+selection-switch → switch ( expression )
+iteration-statement → while ( expressionOrBool ) | for ( expression1_opt ; expression2_opt ; expression3_opt )
+expression1_opt → type-specifier_opt init-declarator | epsilon
+expression2_opt → expression | epsilon
+expression3_opt → expression | epsilon
+doWhile_Body → while ( expressionOrBool ) ;
+expressionOrBool → expression | true | false
+jump-statement → goto identifier ; | continue ; | break ; | return expression_opt ;
+expression_opt → expression | epsilon
+expression → function-call | postOrAssignment
+postOrAssignment → identifier postOrAssignmentFactor
+postOrAssignmentFactor →  epsilon | assignment-expression postOrAssignmentFactor | postfix-expression
+expression' → , assignment-expression expression' | epsilon
+value-expression → epsilon | unary-expression value-expression
+assignment-expression → identifier isTernary | functionCallOrConstant
+isTernary → epsilon | conditional-expression
+functionCallOrConstant → values | assignment-operator assignmentRHS | unary-expression unary-expressionFactor
+unary-expressionFactor → values | identifier | assignment-operator assignmentRHS | function-call
+assignmentRHS → values | identifier | function-call
+assignment-operator_opt → epsilon | assignment-operator
+assignment-operator → = | *= | /= | %= | += | -= | <<= | >>= | &= | ^= | |=
+conditional-expression → comparison-expression comparator-RHS ? comparator-RHS : comparator-RHS
+cast-expression → unary-expression cast-expression | ( type-name ) cast-expression
+unary-expression → postfix-expression | unary-operator | sizeof unary-expression | sizeof ( type-name )
+unary-operator → & | * | + | - | ~ | !
+postfix-expression → comparison-expression comparator-RHS | ++ | --
+comparator-RHS → values | primary-expression
+postfix-expression' → [ expression ] postfix-expression' | ( postfix-expression'-opt ) postfix-expression' | . identifier postfix-expression' | -> identifier postfix-expression' | epsilon
+comparison-expression → < | > | ≤ | ≥ | == | !=
+postfix-expression'-opt → argument-expression-list | epsilon
+primary-expression → constant | string | ( expression )
+argument-expression-list → values argument-expression-list'
+argument-expression-list' → , values argument-expression-list' | epsilon
+initializer → values | assignment-expression | { initializer-list }
+values → sign values_opt | Characters | Strings
+values_opt → Integers | Floats | Long Long_Num_opt
+Long_Num_opt → Long | epsilon
+sign → + | - | epsilon
+initializer-list → initializer initializer-list'
+initializer-list' → , initializer initializer-list' | epsilon
+constant → integer-constant | character-constant | floating-constant | enumeration-constant
+identifier → Identifiers_Variable
+type-qualifier → const | volatile

@@ -13,6 +13,6 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        new Test("grammar3.txt", "source2.txt");
+        new Test("grammar.txt", "source.txt");
     }
 }
