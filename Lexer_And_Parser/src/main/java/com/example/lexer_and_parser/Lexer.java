@@ -270,12 +270,6 @@ public class Lexer {
             t.displayToken();
         }
         System.out.println("----------------------------------------------------------------------");
-        lexer1.changePath("src/main/C/c_code2.c");
-        while (!lexer1.EOF) {
-            Token t = lexer1.getNextToken();
-            t.displayToken();
-        }
-        System.out.println("----------------------------------------------------------------------");
     }
 
 }

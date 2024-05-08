@@ -1,108 +1,81 @@
-#include <stdio.h>
-int test11 = 3451e3;
-// Implementing functions
-int add(int a, int b) {
-    return a + b;
-}
-// Test Case Pass
-typedef struct {
-    int x;
-    int y;
-} Point1;
-//--------------------------------
-
-// Test Case Pass
-struct {
-    int x;
-    int y;
-} Point2;
-//--------------------------------
-
-// Test Case Pass
-struct Point3 {
-    int x;
-    int y;
-};
-//--------------------------------
-
-// Test Case Pass
-typedef struct Point4 {
-    int x;
-    int y;
-} Point4;
-//--------------------------------
-
-// Test Case Pass
-struct Point5;
-// Define struct members later
-struct Point5 {
-    int x;
-    int y;
-};
-//--------------------------------
-
-// Implementing functions
-int add(int a, int b) {
-    return a + b;
-}
-
-void printHello() {
-    printf("Hello, World!\n");
-}
-
-bool isEven(int n) {
-    return n % 2 == 0;
-}
-
-float divide(float a, float b) {
-    return a / b;
-}
-
-double multiply(double a, double b) {
-    return a * b;
-}
-
-long long int power(int a, int b) {
-    long long int result = 1;
-    for (int i = 0; i < b; i++) {
-        result *= a;
-    }
-    return result;
-}
-//--------------------------------
-
-int main() {
-    int add = 0;
-    add += 1;
-    enum {RED, GREEN, BLUE} color;
-    // Declare variables
-    int integerVariable = 42.3, z, h;
-    int test11 = 3451e3;
-    char tt = 'r';
-    str s = "oma";
-    float floatVariable = 3.14;
-    // Tricky Data Type Test Case
-    long long x = 3.16161111LL;
-    unsigned long long x = 3.16161111ULL;
-    long y = 1511164.161664L;
-    unsigned long y = 1551166ul;
-    unsigned long yy = 83166.166e-2UL;
-    bool x;
-    // Struct Test Case
-    Point1 Point1; Point2 Point2;
-    double sum;
-
-    sum = integerVariable + floatVariable;
-    z-h;
-    s += tt;
-    h++;
-    x->y->z->h = 4.5578441e-7;
-    z = 3.146416e-7;
-    omar.hours = 3;
-
-    // Display values using printf
-    printf("Integer Variable: %d\n", integerVariable);
-    printf("Float Variable: %.2f\n", floatVariable);
-
-    return 0;
-}
+// switch (number) {
+//     case 1:
+//         printf("You entered one.\n");
+//         break;
+//     case 2:
+//         printf("You entered two.\n");
+//         break;
+//     case 3:
+//         printf("You entered three.\n");
+//         break;
+//     case 4:
+//         printf("You entered four.\n");
+//         break;
+//     case 5:
+//         printf("You entered five.\n");
+//         break;
+//     default:
+//         printf("Invalid number! Please enter a number between 1 and 5.\n");
+// }
+// int x = y>0 ? 1 : 0;
+// int arr[3] = {5};
+char z = 'c';
+// float h = 3.4f;
+// long tt = 864l;
+// x = y-3;
+// x = z + h;
+// y = 5;
+// int* x = 3;
+// int add(int a, char* b);
+// int add(int a, char* b) {
+//     return a + add(4);
+// }
+// int y=0;
+// int z = 17;
+// if (x<5) {
+//     y = 5;
+// }
+// else {
+//     y = 6;
+// }
+// for (int i=0; i<3; i++) {
+//     x = x+i;
+// }
+// while (y==3) {y+=3;}
+// while (true) {
+//     x++;
+//     if (x == 10) {
+//         break;
+//     }
+// }
+// do{
+//    z = x + y;
+// } while(x==3);
+// int main() {
+//     int x = 3;
+//     int y = 4;
+// }
+// int add2(int x, ...) {
+//     return a + add2(x+2);
+// }
+// add(3,"4");
+// x = add(3,4);
+// enum color;
+// enum Color {
+//     Red,    // 0
+//     Green,  // 1
+//     Blue    // 2
+// };
+// typedef enum {
+//     On,
+//     Off
+// } SwitchState;
+// enum {
+//     WindowWidth = 800,
+//     WindowHeight = 600
+// };
+// struct ComplexNumber {
+//     double real;
+//     double imaginary;
+// };
+// double 27961NezarVar1616;

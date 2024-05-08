@@ -454,10 +454,11 @@ public class CompilerController {
         try {
             // Your existing setup code
             Map<String, TextInBox> nodesDict = new HashMap<>();
-            File grammarFile = new File("src/main/java/com/example/lexer_and_parser/grammar.txt");
-            File sourceFile = new File("src/main/C/c_code(Parser).c");
-            AnalysisTable aTable = new AnalysisTable(grammarFile, sourceFile);
-            Deque<String[]> analysisTableClone = deepCopyDequeOfStringArrays(aTable.getTable());
+
+            if(analysisTable == null){
+                return;
+            }
+            Deque<String[]> analysisTableClone = deepCopyDequeOfStringArrays(this.analysisTable.getTable());
 
             if (analysisTableClone.isEmpty()) {
                 throw new IllegalStateException("No data in the analysis table.");
@@ -515,7 +516,7 @@ public class CompilerController {
             var grammarFile = new File("src/main/java/com/example/lexer_and_parser/grammar.txt");
 
             this.analysisTable = new AnalysisTable(grammarFile, file);
-            var reporter = new Reporter(this.analysisTable);
+
             try {
                 String content = loadFileContent(file);
                 codeTextArea.setText(content);
