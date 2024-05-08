@@ -1,4 +1,4 @@
-package com.example.lexer_and_parser.osamaaboudefParser;
+package com.example.lexer_and_parser;
 
 public class Reporter {
     private AnalysisTable analysisTable;

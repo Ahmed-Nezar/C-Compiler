@@ -1,4 +1,4 @@
-package com.example.lexer_and_parser.osamaaboudefParser;
+package com.example.lexer_and_parser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,7 +17,7 @@ public class Grammar {
             var scanner = new Scanner(grammarFile);
             while (scanner.hasNextLine()) {
                 var line = scanner.nextLine().strip();
-                if (line.startsWith("#") || line.equals(""))
+                if (line.startsWith("#") || line.isEmpty())
                     continue;
 
                 addRule(line);

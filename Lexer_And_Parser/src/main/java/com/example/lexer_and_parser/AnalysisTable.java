@@ -1,7 +1,4 @@
-package com.example.lexer_and_parser.osamaaboudefParser;
-
-import com.example.lexer_and_parser.Lexer;
-import com.example.lexer_and_parser.Token;
+package com.example.lexer_and_parser;
 
 import java.io.File;
 import java.util.*;
@@ -26,6 +23,24 @@ public class AnalysisTable {
         buildTable(l.getTokens()); // Orignial new Lexer2().createTokens(source)
     }
 
+    public static <T> void reverse(Stack<T> stack) {
+        if (!stack.isEmpty()) {
+            T element = stack.pop();
+            reverse(stack);
+            insertAtBottom(stack, element);
+        }
+    }
+
+    private static <T> void insertAtBottom(Stack<T> stack, T element) {
+        if (stack.isEmpty()) {
+            stack.push(element);
+        } else {
+            T top = stack.pop();
+            insertAtBottom(stack, element);
+            stack.push(top);
+        }
+    }
+
     private void buildTable(ArrayList<Token> tokens) { // Orignial List<String>
         var predictiveTable = new PredictiveTable(grammar).getTable();
         table = new ArrayDeque<>();
@@ -47,6 +62,7 @@ public class AnalysisTable {
         Stack<String> stack = new Stack<>();
         stack.push("$");
         stack.push(grammar.getStartSymbol());
+//        reverse(stack);
 
         while (!stack.isEmpty()) {
             row = new String[4];

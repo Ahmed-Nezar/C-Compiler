@@ -1,6 +1,5 @@
 package com.example.lexer_and_parser;
 
-import com.example.lexer_and_parser.osamaaboudefParser.*;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -504,5 +503,4 @@ public class CompilerController {
             lineNumberPane.appendText(i + "\n");
         }
     }
-
 }

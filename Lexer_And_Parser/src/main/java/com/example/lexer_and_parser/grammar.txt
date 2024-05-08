@@ -4,7 +4,8 @@ translation-unit' → external-declaration translation-unit' | epsilon
 external-declaration → external-declarationFactor
 external-declarationFactor → init-declarator-list
 constant_opt → const | epsilon
-function-definition → Identifiers_Function ( parameter-list ) compound-statement
+function-definition → Identifiers_Function ( parameter-list ) function-prototype
+function-prototype → compound-statement | ;
 parameter-list → type-specifier Identifiers_Variable assignment-expression_opt parameter-list' | epsilon
 assignment-expression_opt → assignment-expression | epsilon
 parameter-list' → , parameter-listFact | epsilon
@@ -18,7 +19,7 @@ declaration-list' → epsilon | declaration declaration-list'
 declaration-specifiers → storage-class-specifier declaration-specifiers | type-specifier declaration-specifiers | type-qualifier declaration-specifiers | epsilon
 storage-class-specifier → auto | register | static | extern | typedef
 type-specifier → void | char pointerLoop | short pointerLoop | int pointerLoop | long long_opt pointerLoop | float pointerLoop | double pointerLoop | signed | unsigned | struct-or-union-specifier | enum-specifier
-long_opt → long | epsilon
+long_opt → epsilon | long
 specifier-qualifier-list → specifier-qualifier-listFactor specifier-qualifier-list | epsilon
 specifier-qualifier-listFactor → type-specifier | type-qualifier
 type-name → specifier-qualifier-list type-name_opt
@@ -82,9 +83,12 @@ expression2_opt → expression | epsilon
 expression3_opt → expression | epsilon
 doWhile_Body → while ( expressionOrBool ) ;
 expressionOrBool → expression | true | false
-jump-statement → goto identifier ; | continue ; | break ; | return expression_opt ;
+jump-statement → goto identifier ; | continue ; | break ; | return valueOrExpression ;
+valueOrExpression → values | expression_opt
 expression_opt → expression | epsilon
-expression → function-call | postOrAssignment
+expression → function-call postOrAssignmentOpt | postOrAssignment
+postOrAssignmentOpt → epsilon | postOrAssignmentWithoutId
+postOrAssignmentWithoutId → identifier_opt postOrAssignmentFactor
 postOrAssignment → identifier postOrAssignmentFactor
 postOrAssignmentFactor →  epsilon | assignment-expression postOrAssignmentFactor | postfix-expression
 expression' → , assignment-expression expression' | epsilon
@@ -99,15 +103,16 @@ assignment-operator → = | *= | /= | %= | += | -= | <<= | >>= | &= | ^= | |=
 conditional-expression → comparison-expression comparator-RHS ? comparator-RHS : comparator-RHS
 cast-expression → unary-expression cast-expression | ( type-name ) cast-expression
 unary-expression → postfix-expression | unary-operator | sizeof unary-expression | sizeof ( type-name )
-unary-operator → & | * | + | - | ~ | !
+unary-operator → & | * | + | - | ~ | ! | / | %
 postfix-expression → comparison-expression comparator-RHS | ++ | --
 comparator-RHS → values | primary-expression
 postfix-expression' → [ expression ] postfix-expression' | ( postfix-expression'-opt ) postfix-expression' | . identifier postfix-expression' | -> identifier postfix-expression' | epsilon
 comparison-expression → < | > | ≤ | ≥ | == | !=
 postfix-expression'-opt → argument-expression-list | epsilon
 primary-expression → constant | string | ( expression )
-argument-expression-list → values argument-expression-list'
-argument-expression-list' → , values argument-expression-list' | epsilon
+argument-expression-list → values argument-expression-list' | postOrAssignment argument-expression-list'
+argument-expression-list' → , values argExpFact argument-expression-list' | epsilon
+argExpFact → epsilon | postOrAssignment | values
 initializer → values | assignment-expression | { initializer-list }
 values → sign values_opt | Characters | Strings
 values_opt → Integers | Floats | Long Long_Num_opt
