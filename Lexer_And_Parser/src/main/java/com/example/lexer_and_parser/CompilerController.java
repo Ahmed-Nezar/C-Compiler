@@ -69,7 +69,7 @@ public class CompilerController {
             mainContainer.setPrefWidth(newPrefWidth-630);
         });
 
-        var grammarFile = new File("src/main/java/com/example/lexer_and_parser/osamaaboudefParser/grammar.txt");
+        var grammarFile = new File("src/main/java/com/example/lexer_and_parser/grammar.txt");
         this.predictiveTable = new PredictiveTable(new Grammar(grammarFile));
     }
 
@@ -450,7 +450,7 @@ public class CompilerController {
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             lexer = new Lexer(file.getAbsolutePath());
-            var grammarFile = new File("src/main/java/com/example/lexer_and_parser/osamaaboudefParser/grammar.txt");
+            var grammarFile = new File("src/main/java/com/example/lexer_and_parser/grammar.txt");
 
             this.analysisTable = new AnalysisTable(grammarFile, file);
             var reporter = new Reporter(this.analysisTable);
