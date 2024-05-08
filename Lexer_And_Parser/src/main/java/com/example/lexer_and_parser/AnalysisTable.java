@@ -6,7 +6,7 @@ import java.util.*;
 public class AnalysisTable {
     private File grammarFile;
     private File sourceFile;
-    private Grammar grammar;
+    public static Grammar grammar;
     private String source;
     private String[] columnNames;
     private Deque<String[]> table;

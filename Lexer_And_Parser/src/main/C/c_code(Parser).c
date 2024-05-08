@@ -19,8 +19,7 @@
 // }
 // int x = y>0 ? 1 : 0;
 // int arr[3] = {5};
-int x = -3;
-// char z = 'c';
+char z = 'c';
 // float h = 3.4f;
 // long tt = 864l;
 // x = y-3;

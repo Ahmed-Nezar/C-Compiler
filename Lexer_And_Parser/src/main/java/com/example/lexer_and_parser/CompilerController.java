@@ -388,7 +388,6 @@ public class CompilerController {
         // Set table border
         tableGridPane.setBorder(new Border(new BorderStroke(Color.BLACK,
                 BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-
         // Add terminal column labels
         int col = 0;
         for (String terminal : predictiveTable.getTable().keySet()) {
@@ -398,7 +397,6 @@ public class CompilerController {
             terminalLabel.setMaxWidth(Double.MAX_VALUE);
             tableGridPane.add(terminalLabel, col++, 0); // Start from column 0
         }
-
         // Add non-terminal row labels
         int row = 1; // Start from row 1
         for (String terminal : predictiveTable.getTable().keySet()) {
