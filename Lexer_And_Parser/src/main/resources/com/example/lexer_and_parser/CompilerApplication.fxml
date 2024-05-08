@@ -77,7 +77,7 @@
                               <Font size="18.0" />
                            </font>
                         </Button>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Parse Tree" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="6">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onParseTree" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Parse Tree" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="6">
                            <font>
                               <Font size="18.0" />
                            </font>

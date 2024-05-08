@@ -13,7 +13,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
+import org.abego.treelayout.TreeLayout;
+import org.abego.treelayout.util.DefaultConfiguration;
+import org.abego.treelayout.util.DefaultTreeForTreeLayout;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -358,9 +362,6 @@ public class CompilerController {
             row++;
         }
 
-
-
-
         // Set horizontal scrollbar policy to ALWAYS for the ScrollPane
         this.outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
@@ -436,6 +437,74 @@ public class CompilerController {
         this.outputScrollPane.setFitToHeight(true);
         mainContainer.getChildren().add(tableGridPane);
     }
+
+    public static Deque<String[]> deepCopyDequeOfStringArrays(Deque<String[]> original) {
+        Deque<String[]> copy = new ArrayDeque<>();
+        for (String[] array : original) {
+            // Create a new array and copy contents from the original array
+            String[] newArray = new String[array.length];
+            System.arraycopy(array, 0, newArray, 0, array.length);
+            copy.add(newArray);
+        }
+        return copy;
+    }
+
+    @FXML
+    protected void onParseTree() {
+        try {
+            // Your existing setup code
+            Map<String, TextInBox> nodesDict = new HashMap<>();
+            File grammarFile = new File("src/main/java/com/example/lexer_and_parser/grammar.txt");
+            File sourceFile = new File("src/main/C/c_code(Parser).c");
+            AnalysisTable aTable = new AnalysisTable(grammarFile, sourceFile);
+            Deque<String[]> analysisTableClone = deepCopyDequeOfStringArrays(aTable.getTable());
+
+            if (analysisTableClone.isEmpty()) {
+                throw new IllegalStateException("No data in the analysis table.");
+            }
+
+            String[] currentNodes = analysisTableClone.pop()[0].split(" ");
+            TextInBox root = new TextInBox(currentNodes[1], 6 * currentNodes[1].length(), 20);
+            DefaultTreeForTreeLayout<TextInBox> tree = new DefaultTreeForTreeLayout<>(root);
+            nodesDict.put(currentNodes[1], root);
+
+            buildTreeFromAnalysisTable(analysisTableClone, tree, nodesDict, currentNodes);
+
+            TextInBoxNodeExtentProvider nodeExtentProvider = new TextInBoxNodeExtentProvider();
+            double gapBetweenLevels = 80;
+            double gapBetweenNodes = 20;
+            DefaultConfiguration<TextInBox> configuration = new DefaultConfiguration<>(gapBetweenLevels, gapBetweenNodes);
+            TreeLayout<TextInBox> treeLayout = new TreeLayout<>(tree, nodeExtentProvider, configuration);
+
+            TextInBoxTreePane treePane = new TextInBoxTreePane(treeLayout);
+            ScrollPane scrollPane = new ScrollPane();
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            scrollPane.setPannable(true);
+            scrollPane.setContent(treePane);
+
+            // Add to mainContainer
+            mainContainer.getChildren().clear();
+            mainContainer.getChildren().add(scrollPane);
+        } catch (Exception ex) {
+            ex.printStackTrace(); // Log and handle exception appropriately
+        }
+    }
+
+    private void buildTreeFromAnalysisTable(Deque<String[]> analysisTableClone, DefaultTreeForTreeLayout<TextInBox> tree, Map<String, TextInBox> nodesDict, String[] currentNodes) {
+        while (!analysisTableClone.isEmpty()) {
+            String[] previousNodes = currentNodes.clone();
+            currentNodes = analysisTableClone.pop()[0].split(" ");
+            for (int i = currentNodes.length - 1; i >= 0; i--) {
+                if (!nodesDict.containsKey(currentNodes[i])) {
+                    TextInBox node = new TextInBox(currentNodes[i], 7 * currentNodes[i].length(), 20);
+                    nodesDict.put(currentNodes[i], node);
+                    tree.addChild(nodesDict.get(previousNodes[previousNodes.length - 1]), node);
+                }
+            }
+        }
+    }
+
 
     @FXML
     protected void onUploadButtonClick() {

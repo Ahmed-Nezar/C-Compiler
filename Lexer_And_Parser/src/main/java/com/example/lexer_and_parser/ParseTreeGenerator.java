@@ -28,6 +28,15 @@ public class ParseTreeGenerator {
         dialog.setVisible(true);
     }
 
+    public static String generateSVG() {
+        // Your tree generation logic here
+        // For now, let's assume you return a dummy SVG for demonstration
+        return "<svg height='100' width='100'>" +
+                "<circle cx='50' cy='50' r='40' stroke='black' stroke-width='3' fill='red' />" +
+                "</svg>";
+    }
+
+
     public static Deque<String[]> deepCopyDequeOfStringArrays(Deque<String[]> original) {
         Deque<String[]> copy = new ArrayDeque<>();
         for (String[] array : original) {
@@ -86,7 +95,9 @@ public class ParseTreeGenerator {
                 gapBetweenLevels, gapBetweenNodes);
         TreeLayout<TextInBox> treeLayout = new TreeLayout<TextInBox>(tree, nodeExtentProvider, configuration);
         TextInBoxTreePane panel = new TextInBoxTreePane(treeLayout);
-        panel.setBoxVisible(boxVisible);
-        showInDialog(panel);
+//        panel.setBoxVisible(boxVisible);
+//        ScrollPane scrollPane = new ScrollPane();
+//        scrollPane.add(panel);
+//        showInDialog(panel);
     }
 }
