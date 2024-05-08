@@ -477,15 +477,10 @@ public class CompilerController {
             TreeLayout<TextInBox> treeLayout = new TreeLayout<>(tree, nodeExtentProvider, configuration);
 
             TextInBoxTreePane treePane = new TextInBoxTreePane(treeLayout);
-            ScrollPane scrollPane = new ScrollPane();
-            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-            scrollPane.setPannable(true);
-            scrollPane.setContent(treePane);
 
             // Add to mainContainer
             mainContainer.getChildren().clear();
-            mainContainer.getChildren().add(scrollPane);
+            mainContainer.getChildren().add(treePane);
         } catch (Exception ex) {
             ex.printStackTrace(); // Log and handle exception appropriately
         }
@@ -497,7 +492,7 @@ public class CompilerController {
             currentNodes = analysisTableClone.pop()[0].split(" ");
             for (int i = currentNodes.length - 1; i >= 0; i--) {
                 if (!nodesDict.containsKey(currentNodes[i])) {
-                    TextInBox node = new TextInBox(currentNodes[i], 7 * currentNodes[i].length(), 20);
+                    TextInBox node = new TextInBox(currentNodes[i], 8 * currentNodes[i].length(), 25);
                     nodesDict.put(currentNodes[i], node);
                     tree.addChild(nodesDict.get(previousNodes[previousNodes.length - 1]), node);
                 }
