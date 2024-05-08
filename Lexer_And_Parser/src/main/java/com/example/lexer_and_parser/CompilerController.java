@@ -1,7 +1,6 @@
 package com.example.lexer_and_parser;
 
-import com.example.lexer_and_parser.osamaaboudefParser.AnalysisTable;
-import com.example.lexer_and_parser.osamaaboudefParser.Reporter;
+import com.example.lexer_and_parser.osamaaboudefParser.*;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 
@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,8 @@ public class CompilerController {
 
     private AnalysisTable analysisTable;
 
+    private PredictiveTable predictiveTable;
+
     @FXML
     private ScrollPane outputScrollPane;
 
@@ -66,6 +69,9 @@ public class CompilerController {
             // Set the prefWidth of mainContainer
             mainContainer.setPrefWidth(newPrefWidth-630);
         });
+
+        var grammarFile = new File("src/main/java/com/example/lexer_and_parser/osamaaboudefParser/grammar.txt");
+        this.predictiveTable = new PredictiveTable(new Grammar(grammarFile));
     }
 
     @FXML
@@ -372,6 +378,69 @@ public class CompilerController {
     }
 
     @FXML
+    protected void onPredictiveTableButtonClick(){
+
+        mainContainer.getChildren().clear();
+
+        GridPane tableGridPane = new GridPane();
+        tableGridPane.setAlignment(Pos.CENTER);
+        tableGridPane.setHgap(10); // Add horizontal gap between cells
+
+        // Set table border
+        tableGridPane.setBorder(new Border(new BorderStroke(Color.BLACK,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
+        // Add terminal column labels
+        int col = 0;
+        for (String terminal : predictiveTable.getTable().keySet()) {
+            Label terminalLabel = new Label(terminal);
+            terminalLabel.setStyle("-fx-background-color: #2B396C; -fx-text-fill: white;");
+            terminalLabel.setPadding(new Insets(5, 20, 5, 20));
+            terminalLabel.setMaxWidth(Double.MAX_VALUE);
+            tableGridPane.add(terminalLabel, col++, 0); // Start from column 0
+        }
+
+        // Add non-terminal row labels
+        int row = 1; // Start from row 1
+        for (String terminal : predictiveTable.getTable().keySet()) {
+            Map<String, Production> terminalProductions = predictiveTable.getTable().get(terminal);
+            for (String nonTerminal : terminalProductions.keySet()) {
+                Label nonTerminalLabel = new Label(nonTerminal);
+                nonTerminalLabel.setStyle("-fx-background-color: #2B396C; -fx-text-fill: white;");
+                nonTerminalLabel.setPadding(new Insets(5, 20, 5, 20));
+                nonTerminalLabel.setMaxWidth(Double.MAX_VALUE);
+                tableGridPane.add(nonTerminalLabel, 0, row++); // Start from row 1
+            }
+        }
+
+        // Add productions
+        col = 1; // Start from column 1
+        for (Map.Entry<String, Map<String, Production>> entry : predictiveTable.getTable().entrySet()) {
+            row = 1; // Start from row 1
+            for (Map.Entry<String, Production> innerEntry : entry.getValue().entrySet()) {
+                Production production = innerEntry.getValue();
+                Label productionLabel = new Label(production.toString());
+                productionLabel.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0;");
+                productionLabel.setPadding(new Insets(5, 20, 5, 20));
+                tableGridPane.add(productionLabel, col, row++);
+            }
+            col++; // Move to the next column
+        }
+
+        // Set horizontal scrollbar policy to ALWAYS for the ScrollPane
+        this.outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+        // Set minimum width and height for tableContainer
+        tableGridPane.setMinWidth(Region.USE_PREF_SIZE);
+        tableGridPane.setMinHeight(Region.USE_PREF_SIZE);
+
+        // Allow resizing of the content within the ScrollPane
+        this.outputScrollPane.setFitToWidth(true);
+        this.outputScrollPane.setFitToHeight(true);
+        mainContainer.getChildren().add(tableGridPane);
+    }
+
+    @FXML
     protected void onUploadButtonClick() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select .c File");
@@ -435,4 +504,5 @@ public class CompilerController {
             lineNumberPane.appendText(i + "\n");
         }
     }
+
 }

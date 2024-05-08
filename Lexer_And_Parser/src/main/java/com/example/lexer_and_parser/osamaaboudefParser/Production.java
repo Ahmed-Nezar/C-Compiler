@@ -17,4 +17,9 @@ public class Production {
     public int length() {
         return symbols.size();
     }
+
+    @Override
+    public String toString() {
+        return symbols.toString();
+    }
 }

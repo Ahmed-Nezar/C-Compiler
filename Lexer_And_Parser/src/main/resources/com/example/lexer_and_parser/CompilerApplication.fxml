@@ -82,7 +82,7 @@
                               <Font size="18.0" />
                            </font>
                         </Button>
-                        <Button layoutX="10.0" layoutY="505.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Predictive Table" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="5">
+                        <Button layoutX="10.0" layoutY="505.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPredictiveTableButtonClick" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Predictive Table" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="18.0" />
                            </font>
