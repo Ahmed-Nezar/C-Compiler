@@ -161,7 +161,7 @@ public class AnalysisTable {
         return columnNames;
     }
 
-    private boolean isTerminal(String symbol) {
+    public static boolean isTerminal(String symbol) {
         return grammar.containsTerminal(symbol);
     }
 

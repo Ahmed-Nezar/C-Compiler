@@ -312,7 +312,8 @@ public class CompilerController {
     protected void onAnalysisTableButtonClick() {
 
         mainContainer.getChildren().clear();
-        if(analysisTable == null){
+
+        if(codeTextArea.getText().isEmpty()){
             return;
         }
 
@@ -381,6 +382,10 @@ public class CompilerController {
     protected void onPredictiveTableButtonClick(){
 
         mainContainer.getChildren().clear();
+
+        if(codeTextArea.getText().isEmpty()){
+            return;
+        }
 
         GridPane tableGridPane = new GridPane();
         tableGridPane.setAlignment(Pos.CENTER);
@@ -492,7 +497,7 @@ public class CompilerController {
             // Your existing setup code
             Map<String, TextInBox> nodesDict = new HashMap<>();
 
-            if(analysisTable == null){
+            if(codeTextArea.getText().isEmpty()){
                 return;
             }
             Deque<String[]> analysisTableClone = deepCopyDequeOfStringArrays(this.analysisTable.getTable());
@@ -525,14 +530,30 @@ public class CompilerController {
     }
 
     private void buildTreeFromAnalysisTable(Deque<String[]> analysisTableClone, DefaultTreeForTreeLayout<TextInBox> tree, Map<String, TextInBox> nodesDict, String[] currentNodes) {
+        Deque<String[]> test = deepCopyDequeOfStringArrays(this.analysisTable.getTable());
         while (!analysisTableClone.isEmpty()) {
             String[] previousNodes = currentNodes.clone();
             currentNodes = analysisTableClone.pop()[0].split(" ");
-            for (int i = currentNodes.length - 1; i >= 0; i--) {
+            for (int i = currentNodes.length - 1; i > 0; i--) {
                 if (!nodesDict.containsKey(currentNodes[i])) {
-                    TextInBox node = new TextInBox(currentNodes[i], 8 * currentNodes[i].length(), 25);
+                    TextInBox node;
+                    if (currentNodes[i].length() == 1){
+                        node = new TextInBox(currentNodes[i], 8 * currentNodes[i].length()+10, 25);
+                    } else{
+                        node = new TextInBox(currentNodes[i], 8 * currentNodes[i].length(), 25);
+                    }
                     nodesDict.put(currentNodes[i], node);
                     tree.addChild(nodesDict.get(previousNodes[previousNodes.length - 1]), node);
+                }
+            }
+        }
+        while (!test.isEmpty()) {
+            currentNodes = test.pop()[0].split(" ");
+            for (int i = currentNodes.length - 1; i > 0; i--) {
+                if (tree.getChildrenList(nodesDict.get(currentNodes[i])).isEmpty() &&
+                        !AnalysisTable.isTerminal(currentNodes[i])){
+                    tree.addChild(nodesDict.get(currentNodes[i]),
+                            new TextInBox("ε", 4 * currentNodes[i].length(), 25));
                 }
             }
         }
