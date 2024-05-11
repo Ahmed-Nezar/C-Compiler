@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("ALL")
 public class CompilerController {
     private Lexer lexer;
     @FXML
@@ -58,18 +59,14 @@ public class CompilerController {
 
     @FXML
     protected void initialize() {
-        // Add listener to the codeTextArea text property
         codeTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
             updateLineNumbers(newValue);
         });
         codeTextArea.scrollTopProperty().addListener((observable, oldValue, newValue) -> {
             lineNumberPane.setScrollTop(newValue.doubleValue());
         });
-        // Add listener to update maximum width of mainContainer
         mainWindow.widthProperty().addListener((observable, oldValue, newValue) -> {
-            // Calculate the new prefWidth based on the window width
-            double newPrefWidth = newValue.doubleValue() * 0.9; // Adjust this multiplier as needed
-            // Set the prefWidth of mainContainer
+            double newPrefWidth = newValue.doubleValue() * 0.9;
             mainContainer.setPrefWidth(newPrefWidth-630);
         });
 
@@ -79,10 +76,7 @@ public class CompilerController {
 
     @FXML
     protected void onTokenizeButtonClick(){
-        // Reset horizontal scrollbar policy to default
         this.outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-        // Reset content resizing to default
         this.outputScrollPane.setFitToWidth(false);
         this.outputScrollPane.setFitToHeight(false);
         if (codeTextArea.getText().isEmpty()) {
@@ -97,31 +91,27 @@ public class CompilerController {
         for (Token token : tokens) {
             String name = token.getName();
 
-            // Create label if not already created
             if (!tokenTables.containsKey(name)) {
                 VBox vbox = new VBox();
 
-                // **Inner StackPane for centering**
                 StackPane container = new StackPane();
                 container.setAlignment(Pos.CENTER);
                 container.setStyle("-fx-background-color: #2B396C; -fx-border-radius: 10 10 0 0;" +
-                                   "-fx-background-radius: 10 10 0 0;" +
-                                   "-fx-border-color: black; -fx-border-width: 1px 1px 0 1px;");
+                        "-fx-background-radius: 10 10 0 0;" +
+                        "-fx-border-color: black; -fx-border-width: 1px 1px 0 1px;");
                 container.setPadding(new Insets(4));
 
                 Label label = new Label(name);
                 label.getStyleClass().add("table-lable");
                 label.setPadding(new javafx.geometry.Insets(7, 0, 7, 0));
-                container.getChildren().addAll(label); // Add label to StackPane
+                container.getChildren().addAll(label);
 
                 vbox.getChildren().addAll(container);
                 tokenTables.put(name, vbox);
             }
 
-            // Get the existing VBox for the token name
             VBox vbox = tokenTables.get(name);
 
-            // Check if TableView already exists for the token name
             TableView<Token> tableView = null;
 
             ObservableList<Node> children = vbox.getChildren();
@@ -131,8 +121,6 @@ public class CompilerController {
                     break;
                 }
             }
-
-            // If TableView doesn't exist, create a new one
             if (tableView == null) {
                 tableView = new TableView<>();
                 tableView.getStyleClass().add("table-view");
@@ -165,26 +153,18 @@ public class CompilerController {
                     }
                 });
                 tableView.getColumns().addAll(lineNumberColumn, attributeColumn);
-                // Resize columns to fit table width
                 tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
                 vbox.getChildren().add(tableView);
             }
 
-            // Populate table with token details
             tableView.getItems().add(token);
         }
-
-        // Add all created VBox containers to the main layout
-        // Assuming you have a VBox in your FXML file with fx:id="mainContainer"
         mainContainer.getChildren().addAll(tokenTables.values());
     }
 
     @FXML
     protected void onCreateSymbolTable() {
-        // Reset horizontal scrollbar policy to default
         this.outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-        // Reset content resizing to default
         this.outputScrollPane.setFitToWidth(false);
         this.outputScrollPane.setFitToHeight(false);
         if (codeTextArea.getText().isEmpty()) {
@@ -193,28 +173,20 @@ public class CompilerController {
         mainContainer.getChildren().clear();
         lexer.tokenize();
         ArrayList<Token> tokens = lexer.gtTokens();
-
-        // Filter tokens to include only those whose name contains "Identifier"
         List<Token> identifierTokens = tokens.stream()
                 .filter(token -> !token.getIdentifier().isEmpty())
                 .collect(Collectors.collectingAndThen(
-                Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Token::getAttrVal)
-                .thenComparing(Token::getIdentifierType))),
-                ArrayList::new));
+                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Token::getAttrVal)
+                                .thenComparing(Token::getIdentifierType))),
+                        ArrayList::new));
         identifierTokens.sort(Comparator.comparing(Token::getEntryNum));
-
-        // Create VBox to hold the symbol table
         VBox symbolTableContainer = new VBox();
         symbolTableContainer.setAlignment(Pos.CENTER);
         symbolTableContainer.getStyleClass().add("sTable-Vbox");
-
-        // Create label for the symbol table
         Label label = new Label("Symbol Table");
         label.getStyleClass().add("table-lable");
         label.setPadding(new javafx.geometry.Insets(7, 0, 0, 0));
         symbolTableContainer.getChildren().add(label);
-
-        // Create TableView for the symbol table
         TableView<Token> symbolTableView = new TableView<>();
         symbolTableView.getStyleClass().add("table-view");
         TableColumn<Token, Integer> entryColumn = new TableColumn<>("Entry");
@@ -290,21 +262,12 @@ public class CompilerController {
         });
 
         VBox.setMargin(symbolTableView, new Insets(10, 0, 0, 0));
-
-        // Add columns to the table
         symbolTableView.getColumns().addAll(entryColumn, identifierColumn, attrbuteValueColumn,
                 identifierTypeColumn, lineReferenceColumn);
-
-        // Add filtered tokens to the table
         symbolTableView.getItems().addAll(identifierTokens);
-
         symbolTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        // Add the TableView to the symbol table container
         symbolTableContainer.getChildren().add(symbolTableView);
         symbolTableView.setPrefHeight(490);
-
-        // Add the symbol table container to the main layout
         mainContainer.getChildren().add(symbolTableContainer);
     }
 
@@ -326,12 +289,8 @@ public class CompilerController {
         Label statusLabel = new Label(expressionStatus);
         statusLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 30px;");
         statusBox.getChildren().add(statusLabel);
-
-        // Create GridPane to hold the entire table
         GridPane tableGridPane = new GridPane();
         tableGridPane.setAlignment(Pos.CENTER);
-
-        // Create header row
         String[] columnNames = analysisTable.getColumnNames();
         for (int col = 0; col < columnNames.length; col++) {
             Label headerLabel = new Label(columnNames[col]);
@@ -342,8 +301,6 @@ public class CompilerController {
             GridPane.setHalignment(headerLabel, HPos.CENTER);
             tableGridPane.add(headerLabel, col, 0);
         }
-
-        // Create data rows
         Deque<String[]> tableData = analysisTable.getTable();
         int row = 1;
         for (String[] rowData : tableData) {
@@ -354,7 +311,7 @@ public class CompilerController {
                 dataLabel.setMaxWidth(Double.MAX_VALUE);
                 GridPane.setHgrow(dataLabel, Priority.ALWAYS);
                 if (col == 0) {
-                    dataLabel.setAlignment(Pos.CENTER_RIGHT); // Align labels in the first column to the right
+                    dataLabel.setAlignment(Pos.CENTER_RIGHT);
                 } else {
                     dataLabel.setAlignment(Pos.CENTER_LEFT);
                 }
@@ -362,23 +319,13 @@ public class CompilerController {
             }
             row++;
         }
-
-        // Set horizontal scrollbar policy to ALWAYS for the ScrollPane
         this.outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-
-        // Set minimum width and height for tableContainer
         tableGridPane.setMinWidth(Region.USE_PREF_SIZE);
         tableGridPane.setMinHeight(Region.USE_PREF_SIZE);
-
-        // Allow resizing of the content within the ScrollPane
         this.outputScrollPane.setFitToWidth(true);
         this.outputScrollPane.setFitToHeight(true);
-
-        // Add table container to mainContainer
         mainContainer.getChildren().addAll(statusBox, tableGridPane);
     }
-
-    // Helper method to get the column index for a given terminal
     private int getColumnIndex(GridPane gridPane, String terminal) {
         ObservableList<Node> children = gridPane.getChildren();
         for (Node node : children) {
@@ -389,10 +336,8 @@ public class CompilerController {
                 }
             }
         }
-        return -1; // Return -1 if terminal not found
+        return -1;
     }
-
-    // Helper method to get the row index for a given non-terminal
     private int getRowIndex(GridPane gridPane, String nonTerminal) {
         ObservableList<Node> children = gridPane.getChildren();
         for (Node node : children) {
@@ -403,13 +348,12 @@ public class CompilerController {
                 }
             }
         }
-        return -1; // Return -1 if non-terminal not found
+        return -1;
     }
 
     public static Deque<String[]> deepCopyDequeOfStringArrays(Deque<String[]> original) {
         Deque<String[]> copy = new ArrayDeque<>();
         for (String[] array : original) {
-            // Create a new array and copy contents from the original array
             String[] newArray = new String[array.length];
             System.arraycopy(array, 0, newArray, 0, array.length);
             copy.add(newArray);
@@ -420,7 +364,6 @@ public class CompilerController {
     @FXML
     protected void onParseTree() {
         try {
-            // Your existing setup code
             Map<String, TextInBox> nodesDict = new HashMap<>();
 
             if(codeTextArea.getText().isEmpty()){
@@ -450,17 +393,15 @@ public class CompilerController {
             scrollPane.setPannable(true);
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-
-            // Add to mainContainer
             mainContainer.getChildren().clear();
             mainContainer.getChildren().add(scrollPane);
         } catch (Exception ex) {
-            ex.printStackTrace(); // Log and handle exception appropriately
+            ex.printStackTrace();
         }
     }
 
     private void buildTreeFromAnalysisTable(Deque<String[]> analysisTableClone, DefaultTreeForTreeLayout<TextInBox> tree, Map<String, TextInBox> nodesDict, String[] currentNodes) {
-        Deque<String[]> test = deepCopyDequeOfStringArrays(this.analysisTable.getTable());
+        Deque<String[]> analysisTableClone2 = deepCopyDequeOfStringArrays(this.analysisTable.getTable());
         while (!analysisTableClone.isEmpty()) {
             String[] previousNodes = currentNodes.clone();
             currentNodes = analysisTableClone.pop()[0].split(" ");
@@ -477,17 +418,15 @@ public class CompilerController {
                 }
             }
         }
-        while (!test.isEmpty()) {
-            currentNodes = test.pop()[0].split(" ");
+        while (!analysisTableClone2.isEmpty()) {
+            currentNodes = analysisTableClone2.pop()[0].split(" ");
             for (int i = currentNodes.length - 1; i > 0; i--) {
                 if (tree.getChildrenList(nodesDict.get(currentNodes[i])).isEmpty() &&
                         !AnalysisTable.isTerminal(currentNodes[i])){
-//                    tree.getChildrenList(tree.getParent(nodesDict.get(currentNodes[i])))
-//                            .remove(nodesDict.get(currentNodes[i]));
-//                    if (nodesDict.get(currentNodes[i]) != null)
-//                        nodesDict.remove(currentNodes[i]);
-                    tree.addChild(nodesDict.get(currentNodes[i]),
-                            new TextInBox("ε", 4 * currentNodes[i].length(), 25));
+                    tree.getChildrenList(tree.getParent(nodesDict.get(currentNodes[i])))
+                            .remove(nodesDict.get(currentNodes[i]));
+                    if (nodesDict.get(currentNodes[i]) != null)
+                        nodesDict.remove(currentNodes[i]);
                 }
             }
         }

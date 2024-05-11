@@ -18,7 +18,9 @@ declaration-list → declaration declaration-list'
 declaration-list' → epsilon | declaration declaration-list'
 declaration-specifiers → storage-class-specifier declaration-specifiers | type-specifier declaration-specifiers | type-qualifier declaration-specifiers | epsilon
 storage-class-specifier → auto | register | static | extern | typedef
-type-specifier → void | char pointerLoop | short pointerLoop | int pointerLoop | long long_opt pointerLoop | float pointerLoop | double pointerLoop | signed | unsigned | struct-or-union-specifier | enum-specifier
+type-specifier → unsigned_opt Unsfact | void | struct-or-union-specifier | enum-specifier
+Unsfact → char pointerLoop | short pointerLoop | int pointerLoop | long long_opt pointerLoop | float pointerLoop | double pointerLoop
+unsigned_opt → signed | unsigned | epsilon
 long_opt → epsilon | long
 specifier-qualifier-list → specifier-qualifier-listFactor specifier-qualifier-list | epsilon
 specifier-qualifier-listFactor → type-specifier | type-qualifier
