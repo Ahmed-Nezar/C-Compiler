@@ -1,25 +1,25 @@
-// switch (number) {
-//     case 1:
-//         printf("You entered one.\n");
-//         break;
-//     case 2:
-//         printf("You entered two.\n");
-//         break;
-//     case 3:
-//         printf("You entered three.\n");
-//         break;
-//     case 4:
-//         printf("You entered four.\n");
-//         break;
-//     case 5:
-//         printf("You entered five.\n");
-//         break;
-//     default:
-//         printf("Invalid number! Please enter a number between 1 and 5.\n");
-// }
+switch (number) {
+    case 1:
+        printf("You entered one.\n");
+        break;
+    case 2:
+        printf("You entered two.\n");
+        break;
+    case 3:
+        printf("You entered three.\n");
+        break;
+    case 4:
+        printf("You entered four.\n");
+        break;
+    case 5:
+        printf("You entered five.\n");
+        break;
+    default:
+        printf("Invalid number! Please enter a number between 1 and 5.\n");
+}
 // int x = y>0 ? 1 : 0;
 // int arr[3] = {5};
-char z = 'c';
+// char z = 'c';
 // float h = 3.4f;
 // long tt = 864l;
 // x = y-3;

@@ -378,80 +378,6 @@ public class CompilerController {
         mainContainer.getChildren().addAll(statusBox, tableGridPane);
     }
 
-    @FXML
-    protected void onPredictiveTableButtonClick(){
-
-        mainContainer.getChildren().clear();
-
-        if(codeTextArea.getText().isEmpty()){
-            return;
-        }
-
-        GridPane tableGridPane = new GridPane();
-        tableGridPane.setAlignment(Pos.CENTER);
-        tableGridPane.setHgap(10); // Add horizontal gap between cells
-
-        // Set table border
-        tableGridPane.setBorder(new Border(new BorderStroke(Color.BLACK,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        // Add terminal column labels
-        int col = 1;
-        int row = 1;
-        for (String terminal : predictiveTable.getTable().keySet()) {
-            Label terminalLabel = new Label(terminal);
-            terminalLabel.setStyle("-fx-background-color: #2B396C; -fx-text-fill: white;");
-            terminalLabel.setPadding(new Insets(5, 20, 5, 20));
-            terminalLabel.setMaxWidth(Double.MAX_VALUE);
-            tableGridPane.add(terminalLabel, col++, 0); // Start from column 0
-            Map<String, Production> terminalProductions = predictiveTable.getTable().get(terminal);
-            for (String nonTerminal : terminalProductions.keySet()) {
-                Label nonTerminalLabel = new Label(nonTerminal);
-                nonTerminalLabel.setStyle("-fx-background-color: #2B396C; -fx-text-fill: white;");
-                nonTerminalLabel.setPadding(new Insets(5, 20, 5, 20));
-                nonTerminalLabel.setMaxWidth(Double.MAX_VALUE);
-                tableGridPane.add(nonTerminalLabel, 0, row++); // Start from row 1
-            }
-        }
-
-        // Add productions
-
-        for (Map.Entry<String, Map<String, Production>> entry : predictiveTable.getTable().entrySet()) {
-            String terminal = entry.getKey();
-            Map<String, Production> nonTerminalProductions = entry.getValue();
-
-            int columnIndex = getColumnIndex(tableGridPane, terminal); // Get the column index for the terminal
-
-            for (Map.Entry<String, Production> innerEntry : nonTerminalProductions.entrySet()) {
-                String nonTerminal = innerEntry.getKey();
-                Production production = innerEntry.getValue();
-
-                int rowIndex = getRowIndex(tableGridPane, nonTerminal); // Get the row index for the non-terminal
-
-                // Check if both column and row indices are valid
-                if (columnIndex != -1 && rowIndex != -1) {
-                    Label productionLabel = new Label(production.toString());
-                    productionLabel.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0;");
-                    productionLabel.setPadding(new Insets(5, 20, 5, 20));
-                    tableGridPane.add(productionLabel, columnIndex, rowIndex);
-                }
-            }
-        }
-
-
-
-        // Set horizontal scrollbar policy to ALWAYS for the ScrollPane
-        this.outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-
-        // Set minimum width and height for tableContainer
-        tableGridPane.setMinWidth(Region.USE_PREF_SIZE);
-        tableGridPane.setMinHeight(Region.USE_PREF_SIZE);
-
-        // Allow resizing of the content within the ScrollPane
-        this.outputScrollPane.setFitToWidth(true);
-        this.outputScrollPane.setFitToHeight(true);
-        mainContainer.getChildren().add(tableGridPane);
-    }
-
     // Helper method to get the column index for a given terminal
     private int getColumnIndex(GridPane gridPane, String terminal) {
         ObservableList<Node> children = gridPane.getChildren();
@@ -520,10 +446,14 @@ public class CompilerController {
             TreeLayout<TextInBox> treeLayout = new TreeLayout<>(tree, nodeExtentProvider, configuration);
 
             TextInBoxTreePane treePane = new TextInBoxTreePane(treeLayout);
+            ScrollPane scrollPane = new ScrollPane(treePane);
+            scrollPane.setPannable(true);
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
             // Add to mainContainer
             mainContainer.getChildren().clear();
-            mainContainer.getChildren().add(treePane);
+            mainContainer.getChildren().add(scrollPane);
         } catch (Exception ex) {
             ex.printStackTrace(); // Log and handle exception appropriately
         }
@@ -537,9 +467,9 @@ public class CompilerController {
             for (int i = currentNodes.length - 1; i > 0; i--) {
                 if (!nodesDict.containsKey(currentNodes[i])) {
                     TextInBox node;
-                    if (currentNodes[i].length() == 1){
-                        node = new TextInBox(currentNodes[i], 8 * currentNodes[i].length()+10, 25);
-                    } else{
+                    if (currentNodes[i].length() == 1) {
+                        node = new TextInBox(currentNodes[i], 8 * currentNodes[i].length() + 10, 25);
+                    } else {
                         node = new TextInBox(currentNodes[i], 8 * currentNodes[i].length(), 25);
                     }
                     nodesDict.put(currentNodes[i], node);
@@ -552,6 +482,10 @@ public class CompilerController {
             for (int i = currentNodes.length - 1; i > 0; i--) {
                 if (tree.getChildrenList(nodesDict.get(currentNodes[i])).isEmpty() &&
                         !AnalysisTable.isTerminal(currentNodes[i])){
+//                    tree.getChildrenList(tree.getParent(nodesDict.get(currentNodes[i])))
+//                            .remove(nodesDict.get(currentNodes[i]));
+//                    if (nodesDict.get(currentNodes[i]) != null)
+//                        nodesDict.remove(currentNodes[i]);
                     tree.addChild(nodesDict.get(currentNodes[i]),
                             new TextInBox("ε", 4 * currentNodes[i].length(), 25));
                 }

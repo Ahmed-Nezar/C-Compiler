@@ -49,7 +49,6 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="60.0" prefHeight="27.0" prefWidth="215.0" style="&#10;" text="Menu" textAlignment="CENTER" textFill="WHITE" wrapText="false">
@@ -77,12 +76,7 @@
                               <Font size="18.0" />
                            </font>
                         </Button>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onParseTree" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Parse Tree" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="6">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Button>
-                        <Button layoutX="10.0" layoutY="505.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPredictiveTableButtonClick" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Parse Table" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="5">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onParseTree" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #50727B; -fx-cursor: hand;" text="Parse Tree" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="18.0" />
                            </font>
