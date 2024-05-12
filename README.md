@@ -1,3 +1,4 @@
-# C-Lexical Analyzer Demo:
+# C Lexical & Parser Analyzer Demo:
 
-https://github.com/Ahmed-Nezar/C-Compiler/assets/125405335/f07566f6-b770-4eed-8c3e-3423c7517d89
+https://github.com/Ahmed-Nezar/C-Compiler/assets/125405335/c5e15b4d-e83c-4a3a-b725-2026d96185e9
+
