@@ -1,3 +1,5 @@
+// int 16461Variable = 3; // Lexical ERROR
+// int = 3 // SYNTAX ERROR
  int main() {
      int x = 3;
      float y = 4.2f;

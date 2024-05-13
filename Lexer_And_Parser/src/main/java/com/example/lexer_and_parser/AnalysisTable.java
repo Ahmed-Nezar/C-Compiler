@@ -7,7 +7,6 @@ public class AnalysisTable {
     private File grammarFile;
     private File sourceFile;
     public static Grammar grammar;
-    private String source;
     private String[] columnNames;
     private Deque<String[]> table;
     private boolean complete;
@@ -16,7 +15,6 @@ public class AnalysisTable {
         this.grammarFile = grammarFile;
         this.sourceFile = sourceFile;
         grammar = new Grammar(grammarFile);
-        source = PreProcessor.getStrippedSource(sourceFile);
         columnNames = new String[]{"Stack", "Tokens Queue", "Decision", "Observation"};
         Lexer l = new Lexer(sourceFile.getPath()); // Orignial Remove
         l.tokenize(); // Orignial Remove
@@ -62,7 +60,6 @@ public class AnalysisTable {
         Stack<String> stack = new Stack<>();
         stack.push("$");
         stack.push(grammar.getStartSymbol());
-//        reverse(stack);
 
         while (!stack.isEmpty()) {
             row = new String[4];
@@ -135,10 +132,6 @@ public class AnalysisTable {
             table.add(row);
         }
         complete = true;
-    }
-
-    public String getSource() {
-        return source;
     }
 
     public Deque<String[]> getTable() {

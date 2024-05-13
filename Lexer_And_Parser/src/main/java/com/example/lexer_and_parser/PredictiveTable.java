@@ -2,7 +2,19 @@ package com.example.lexer_and_parser;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/*
+table =
+        {
+            TERMINAL: {
+                NON-TERMINAL: PRODUCTION,
+                NON-TERMINAL: PRODUCTION
+            },
+            TERMINAL: {
+                NON-TERMINAL: PRODUCTION,
+                NON-TERMINAL: PRODUCTION
+            }
+        }
+ */
 public class PredictiveTable {
     private Map<String, Map<String, Production>> table = new HashMap<>(); // Key: Terminal, Value: Map of Non-Terminal & Production
 

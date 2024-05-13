@@ -369,25 +369,35 @@ public class CompilerController {
             if(codeTextArea.getText().isEmpty()){
                 return;
             }
-            Deque<String[]> analysisTableClone = deepCopyDequeOfStringArrays(this.analysisTable.getTable());
 
+            Deque<String[]> analysisTableClone = deepCopyDequeOfStringArrays(this.analysisTable.getTable());
             if (analysisTableClone.isEmpty()) {
                 throw new IllegalStateException("No data in the analysis table.");
             }
+            TreeLayout<TextInBox> treeLayout;
+            if (!this.analysisTable.isComplete()) {
+                TextInBox root = new TextInBox(this.analysisTable.getTable().getLast()[2],
+                        6 * this.analysisTable.getTable().getLast()[2].length(), 20);
+                DefaultTreeForTreeLayout<TextInBox> tree = new DefaultTreeForTreeLayout<>(root);
+                TextInBoxNodeExtentProvider nodeExtentProvider = new TextInBoxNodeExtentProvider();
+                double gapBetweenLevels = 80;
+                double gapBetweenNodes = 20;
+                DefaultConfiguration<TextInBox> configuration = new DefaultConfiguration<>(gapBetweenLevels, gapBetweenNodes);
+                treeLayout = new TreeLayout<>(tree, nodeExtentProvider, configuration);
+            } else {
+                String[] currentNodes = analysisTableClone.pop()[0].split(" ");
+                TextInBox root = new TextInBox(currentNodes[1], 6 * currentNodes[1].length(), 20);
+                DefaultTreeForTreeLayout<TextInBox> tree = new DefaultTreeForTreeLayout<>(root);
+                nodesDict.put(currentNodes[1], root);
 
-            String[] currentNodes = analysisTableClone.pop()[0].split(" ");
-            TextInBox root = new TextInBox(currentNodes[1], 6 * currentNodes[1].length(), 20);
-            DefaultTreeForTreeLayout<TextInBox> tree = new DefaultTreeForTreeLayout<>(root);
-            nodesDict.put(currentNodes[1], root);
+                buildTreeFromAnalysisTable(analysisTableClone, tree, nodesDict, currentNodes);
 
-            buildTreeFromAnalysisTable(analysisTableClone, tree, nodesDict, currentNodes);
-
-            TextInBoxNodeExtentProvider nodeExtentProvider = new TextInBoxNodeExtentProvider();
-            double gapBetweenLevels = 80;
-            double gapBetweenNodes = 20;
-            DefaultConfiguration<TextInBox> configuration = new DefaultConfiguration<>(gapBetweenLevels, gapBetweenNodes);
-            TreeLayout<TextInBox> treeLayout = new TreeLayout<>(tree, nodeExtentProvider, configuration);
-
+                TextInBoxNodeExtentProvider nodeExtentProvider = new TextInBoxNodeExtentProvider();
+                double gapBetweenLevels = 80;
+                double gapBetweenNodes = 20;
+                DefaultConfiguration<TextInBox> configuration = new DefaultConfiguration<>(gapBetweenLevels, gapBetweenNodes);
+                treeLayout = new TreeLayout<>(tree, nodeExtentProvider, configuration);
+            }
             TextInBoxTreePane treePane = new TextInBoxTreePane(treeLayout);
             ScrollPane scrollPane = new ScrollPane(treePane);
             scrollPane.setPannable(true);
